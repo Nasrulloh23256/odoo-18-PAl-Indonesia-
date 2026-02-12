@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?> 
+<odoo> 
+    <template id="asset_register_login_logo" inherit_id="web.login_layout"> <!-- Override layout login -->
+        <xpath expr="//img[contains(@t-attf-src, 'company_logo')]" position="replace"> <!-- Ganti tag logo bawaan -->
+            <img src="/asset_register/static/src/img/pal_logo.svg" alt="PAL Indonesia" style="max-height:120px; max-width:100%; width:auto"/> <!-- Logo PAL SVG -->
+        </xpath> 
+    </template> 
+</odoo> 

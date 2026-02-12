@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Template CRUD: header + filter + form input + tabel data, supaya alur kerja CRUD terlihat jelas di satu halaman. -->
+        <template id="pal_asset_crud_page" name="PAL Asset CRUD Page">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-call="web.frontend_layout">
+                <!-- Container halaman CRUD: menjaga tampilan tetap fokus ke form dan tabel tanpa gangguan elemen lain. -->
+                <div style="max-width: 980px; margin: 0 auto; padding: 24px; background: #ffffff;">
+                    <!-- Header halaman CRUD: identitas kecil + judul agar user tahu sedang di halaman input data. -->
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <img src="/asset_register/static/src/img/pal_logo.svg" alt="PAL Indonesia" style="height:56px; width:auto;"/>
+                        <div>
+                            <h2 style="margin:0; color:#04438C;">Asset Register (CRUD)</h2>
+                            <p style="margin:4px 0 0; color:#022554;">Tambah, ubah, dan hapus data aset</p>
+                        </div>
+                    </div>
+
+                    <!-- Form filter: dipakai untuk pencarian cepat agar user bisa memperkecil hasil sebelum melihat tabel. -->
+                    <form id="pal-assets-filter" action="/pal/assets" method="get" style="margin-top:16px; padding:12px; border:1px solid #e5e7eb; border-radius:8px; background:#E6EEF9;">
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+                            <div>
+                                <label style="color:#022554;">Cari (Nama/Kode/Lokasi)</label>
+                                <input id="pal-search-q" type="text" name="q" t-att-value="search_query" placeholder="Ketik kata kunci..." style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Filter Lokasi</label>
+                                <select id="pal-search-location" name="location_id" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+                                    <option value="" t-att-selected="not filter_location_id">Semua Lokasi</option>
+                                    <t t-foreach="locations" t-as="loc">
+                                        <option t-att-value="loc.id" t-att-selected="loc.id == filter_location_id"><t t-esc="loc.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Filter Kondisi</label>
+                                <select id="pal-search-condition" name="condition" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+                                    <option value="" t-att-selected="not filter_condition">Semua Kondisi</option>
+                                    <t t-foreach="conditions" t-as="cond">
+                                        <option t-att-value="cond[0]" t-att-selected="cond[0] == filter_condition"><t t-esc="cond[1]"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px; display:flex; gap:8px;">
+                            <button type="submit" style="background:#04438C; color:#fff; padding:8px 12px; border:none; border-radius:6px;">Cari</button>
+                            <a href="/pal/assets" style="padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; color:#03336A; text-decoration:none;">Reset</a>
+                        </div>
+                    </form>
+
+                    <!-- Form master lokasi: dipakai menambah daftar lokasi langsung dari halaman ini supaya user tidak perlu pindah menu. -->
+                    <form action="/pal/assets" method="post" style="margin-top:20px; padding:16px; border:1px solid #e5e7eb; border-radius:8px; background:#f8fafc;">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="form_type" value="location"/>
+                        <h3 style="margin:0 0 10px; color:#04438C;">Tambah Lokasi</h3>
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+                            <div>
+                                <label style="color:#022554;">Nama Lokasi</label>
+                                <input type="text" name="location_name" required="required" placeholder="Contoh: Dock 3" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Kode Lokasi (Opsional)</label>
+                                <input type="text" name="location_code" placeholder="Contoh: DCK3" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                        </div>
+                        <t t-if="location_error">
+                            <div style="margin-top:10px; padding:10px; background:#E6EEF9; border:1px solid #cbd5e1; color:#022554;">
+                                <t t-esc="location_error"/>
+                            </div>
+                        </t>
+                        <button type="submit" style="margin-top:12px; background:#04438C; color:#fff; padding:10px 14px; border:none; border-radius:6px;">Simpan Lokasi</button>
+                    </form>
+
+                    <!-- Form input: area Create untuk menambah data baru sebelum masuk ke tabel list. -->
+                    <form action="/pal/assets" method="post" style="margin-top:20px; padding:16px; border:1px solid #e5e7eb; border-radius:8px;">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="form_type" value="asset"/>
+                        <h3 style="margin:0 0 10px; color:#04438C;">Tambah Aset</h3>
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+                            <div>
+                                <label style="color:#022554;">Nama Aset</label>
+                                <input type="text" name="name" required="required" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Kode Aset</label>
+                                <input type="text" name="code" required="required" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Lokasi</label>
+                                <select name="location_id" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+                                    <option value="">Pilih Lokasi</option>
+                                    <t t-foreach="locations" t-as="loc">
+                                        <option t-att-value="loc.id"><t t-esc="loc.name"/></option>
+                                    </t>
+                                </select>
+                                <small style="display:block; margin-top:4px; color:#64748b;">Jika belum ada di daftar, isi kolom Lokasi Baru.</small>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Lokasi Baru (Opsional)</label>
+                                <input type="text" name="new_location_name" placeholder="Contoh: Dock 5" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Kondisi</label>
+                                <select name="condition" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+                                    <t t-foreach="conditions" t-as="cond">
+                                        <option t-att-value="cond[0]"><t t-esc="cond[1]"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Tanggal Beli</label>
+                                <input type="date" name="purchase_date" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                        </div>
+                        <t t-if="asset_error">
+                            <div style="margin-top:10px; padding:10px; background:#E6EEF9; border:1px solid #cbd5e1; color:#022554;">
+                                <t t-esc="asset_error"/>
+                            </div>
+                        </t>
+                        <button type="submit" style="margin-top:12px; background:#04438C; color:#fff; padding:10px 14px; border:none; border-radius:6px;">Simpan</button>
+                    </form>
+
+                    <!-- Tabel list: menampilkan hasil data + tombol edit/hapus agar Read/Update/Delete mudah dijangkau. -->
+                    <div style="margin-top:24px;">
+                        <h3 style="color:#04438C; margin-bottom:8px;">Daftar Aset</h3>
+                        <table style="width:100%; border-collapse:collapse;">
+                            <thead>
+                                <tr style="background:#E6EEF9; color:#022554;">
+                                    <th style="text-align:left; padding:8px; border:1px solid #e5e7eb;">Nama</th>
+                                    <th style="text-align:left; padding:8px; border:1px solid #e5e7eb;">Kode</th>
+                                    <th style="text-align:left; padding:8px; border:1px solid #e5e7eb;">Lokasi</th>
+                                    <th style="text-align:left; padding:8px; border:1px solid #e5e7eb;">Kondisi</th>
+                                    <th style="text-align:left; padding:8px; border:1px solid #e5e7eb;">Tanggal</th>
+                                    <th style="text-align:left; padding:8px; border:1px solid #e5e7eb;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="assets" t-as="asset">
+                                    <tr>
+                                        <td style="padding:8px; border:1px solid #e5e7eb;"><t t-esc="asset.name"/></td>
+                                        <td style="padding:8px; border:1px solid #e5e7eb;"><t t-esc="asset.code"/></td>
+                                        <td style="padding:8px; border:1px solid #e5e7eb;"><t t-esc="asset.location_id.name or '-'"/></td>
+                                        <td style="padding:8px; border:1px solid #e5e7eb;"><t t-esc="asset.condition"/></td>
+                                        <td style="padding:8px; border:1px solid #e5e7eb;"><t t-esc="asset.purchase_date"/></td>
+                                        <td style="padding:8px; border:1px solid #e5e7eb;">
+                                            <a t-attf-href="/pal/assets/#{asset.id}/edit" style="color:#04438C; margin-right:8px;">Edit</a>
+                                            <form t-attf-action="/pal/assets/#{asset.id}/delete" method="post" style="display:inline;">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <button type="submit" style="background:#03336A; color:#fff; border:none; padding:6px 8px; border-radius:4px;">Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- Template edit: fokus pada update data aset, memakai nilai lama sebagai default agar user tidak mengisi ulang dari nol. -->
+        <template id="pal_asset_edit_page" name="PAL Asset Edit Page">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-call="web.frontend_layout">
+                <!-- Container halaman edit: konsisten dengan halaman CRUD agar pengalaman user tetap seragam. -->
+                <div style="max-width: 980px; margin: 0 auto; padding: 24px; background: #ffffff;">
+                    <!-- Header halaman edit: identitas + informasi singkat agar user yakin sedang mengubah data. -->
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <img src="/asset_register/static/src/img/pal_logo.svg" alt="PAL Indonesia" style="height:56px; width:auto;"/>
+                        <div>
+                            <h2 style="margin:0; color:#04438C;">Edit Aset</h2>
+                            <p style="margin:4px 0 0; color:#022554;">Ubah data aset lalu simpan</p>
+                        </div>
+                    </div>
+
+                    <!-- Box error: menampilkan validasi jika data wajib belum lengkap. -->
+                    <t t-if="error">
+                        <div style="margin-top:16px; padding:12px; background:#E6EEF9; border:1px solid #cbd5e1; color:#022554;">
+                            <t t-esc="error"/>
+                        </div>
+                    </t>
+
+                    <!-- Form edit: prefilled dari data lama agar user tinggal memperbaiki field yang perlu diubah. -->
+                    <form t-attf-action="/pal/assets/#{asset.id}/edit" method="post" style="margin-top:20px; padding:16px; border:1px solid #e5e7eb; border-radius:8px;">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+                            <div>
+                                <label style="color:#022554;">Nama Aset</label>
+                                <input type="text" name="name" required="required" t-att-value="asset.name or ''" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Kode Aset</label>
+                                <input type="text" name="code" required="required" t-att-value="asset.code or ''" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Lokasi</label>
+                                <select name="location_id" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+                                    <option value="">Pilih Lokasi</option>
+                                    <t t-foreach="locations" t-as="loc">
+                                        <option t-att-value="loc.id" t-att-selected="loc.id == asset.location_id.id"><t t-esc="loc.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Kondisi</label>
+                                <select name="condition" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+                                    <t t-foreach="conditions" t-as="cond">
+                                        <option t-att-value="cond[0]" t-att-selected="cond[0] == asset.condition"><t t-esc="cond[1]"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="color:#022554;">Tanggal Beli</label>
+                                <input type="date" name="purchase_date" t-att-value="asset.purchase_date or ''" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;"/>
+                            </div>
+                        </div>
+                        <div style="margin-top:12px;">
+                            <button type="submit" style="background:#04438C; color:#fff; padding:10px 14px; border:none; border-radius:6px;">Simpan</button>
+                            <a href="/pal/assets" style="margin-left:8px; color:#03336A;">Batal</a>
+                        </div>
+                    </form>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

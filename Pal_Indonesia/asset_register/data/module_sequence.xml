@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?> <!-- Deklarasi XML -->
+<odoo> <!-- Root tag Odoo -->
+    <data> <!-- Container data -->
+        <record id="base.module_asset_register" model="ir.module.module"> <!-- Referensi record modul -->
+            <field name="sequence">1</field> <!-- Urutan modul di Apps (semakin kecil semakin atas) -->
+        </record> <!-- Akhir record modul -->
+    </data> <!-- Akhir container data -->
+</odoo> <!-- Akhir root -->

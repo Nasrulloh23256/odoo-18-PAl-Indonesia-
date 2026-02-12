@@ -1,0 +1,180 @@
+/*
+  Tema PAL ini hanya menyentuh bagian tertentu dari UI backend agar tampilan lebih brand-consistent
+  tanpa mengubah semua style Odoo secara global. Fokus utamanya: navbar, tombol utama, dan ikon.
+*/
+
+/* Bagian Navbar: memaksa header menjadi putih dan membersihkan warna ungu default agar terlihat seperti contoh PAL. */
+.o_main_navbar,
+.o_main_navbar .o_navbar,
+.o_main_navbar .o_menu_sections,
+.o_main_navbar .o_menu_systray {
+  background-color: #ffffff !important;
+  border-bottom: none !important;
+}
+
+/* Bagian Garis Navbar: membuat satu garis bawah menyambung dengan warna navy PAL agar header terasa tegas. */
+.o_main_navbar {
+  position: relative;
+  box-shadow: inset 0 -1px 0 #04438C !important;
+}
+
+.o_main_navbar::after {
+  content: none !important;
+}
+
+/* Bagian Reset Background: membersihkan background ungu di elemen internal navbar agar benar-benar putih. */
+.o_main_navbar * {
+  background-color: transparent !important;
+}
+
+/* Bagian Warna Teks Navbar: memberi warna navy pada link dan teks agar sesuai identitas PAL. */
+.o_main_navbar a,
+.o_main_navbar span {
+  color: #04438C !important;
+}
+
+/* Bagian Brand & Logo: menambah ruang dan ikon logo di kiri agar brand PAL terlihat halus. */
+.o_main_navbar .o_menu_brand {
+  position: relative;
+  padding-left: 36px;
+  color: #04438C !important;
+}
+
+.o_main_navbar .o_menu_brand,
+.o_main_navbar .o_app_switcher,
+.o_main_navbar .o_app_switcher .dropdown-toggle {
+  background-color: #ffffff !important;
+}
+
+.o_main_navbar .o_app_switcher .o_app_switcher_dropdown,
+.o_main_navbar .o_app_switcher .o_switcher,
+.o_main_navbar .o_app_switcher .o_switcher_button {
+  background-color: #ffffff !important;
+  color: #04438C !important;
+}
+
+.o_main_navbar .o_menu_brand::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background-image: url("/asset_register/static/src/img/pal_logo.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Bagian Tombol Utama: menyamakan warna tombol penting dengan navy PAL agar konsisten. */
+.btn-primary,
+.o_btn_primary {
+  background-color: #04438C !important;
+  border-color: #04438C !important;
+}
+
+.btn-primary:hover,
+.o_btn_primary:hover {
+  background-color: #0a56b2 !important;
+  border-color: #0a56b2 !important;
+}
+
+.o_app .btn-primary,
+.o_app .o_btn_primary {
+  background-color: #04438C !important;
+  border-color: #04438C !important;
+}
+
+/* Bagian App Switcher: memastikan tombol grid aplikasi tetap putih dan tidak membuat kotak ungu. */
+.o_main_navbar .o_navbar_apps_menu {
+  background-color: #ffffff !important;
+}
+
+.o_main_navbar .o_navbar_apps_menu .dropdown-toggle {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 12px !important;
+}
+
+.o_main_navbar .o_navbar_apps_menu .dropdown-toggle:hover,
+.o_main_navbar .o_navbar_apps_menu .dropdown-toggle:focus {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Bagian Hover Menu Navbar: memberikan efek hover lembut agar UI terasa interaktif tapi tetap clean. */
+.o_main_navbar .o_menu_sections .o_nav_entry,
+.o_main_navbar .o_menu_sections .dropdown-toggle {
+  transition: background-color 0.15s ease, color 0.15s ease;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.o_main_navbar .o_menu_sections .o_nav_entry:hover,
+.o_main_navbar .o_menu_sections .dropdown-toggle:hover {
+  background-color: #E6EEF9 !important;
+  color: #03336A !important;
+}
+
+/* Bagian Hover Ikon Grid: memperhalus hover di tombol grid supaya selaras dengan hover menu. */
+.o_main_navbar .o_navbar_apps_menu .dropdown-toggle {
+  transition: background-color 0.15s ease;
+  border-radius: 6px;
+}
+
+.o_main_navbar .o_navbar_apps_menu .dropdown-toggle:hover {
+  background-color: #E6EEF9 !important;
+}
+
+/* Bagian Ikon Folder Sidebar: memberi warna navy pada ikon folder agar kategori lebih tegas. */
+.o_navbar .o_menu_section i.fa-folder,
+.o_navbar .o_menu_section i.fa-folder-open,
+.o_navbar .o_menu_section .fa-folder,
+.o_navbar .o_menu_section .fa-folder-open {
+  color: #04438C !important;
+}
+
+/* Bagian Hapus Garis Bawah: menghilangkan underline aktif bawaan agar header terlihat bersih. */
+.o_main_navbar .o_menu_sections .dropdown-toggle,
+.o_main_navbar .o_menu_sections .dropdown-toggle:hover,
+.o_main_navbar .o_menu_sections .dropdown-toggle:focus,
+.o_main_navbar .o_menu_sections .dropdown-toggle.active,
+.o_main_navbar .o_menu_sections .o_nav_entry {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+.o_main_navbar .o_menu_brand,
+.o_main_navbar .o_menu_brand:hover,
+.o_main_navbar .o_menu_brand:focus,
+.o_main_navbar .o_menu_brand.o_nav_entry,
+.o_main_navbar .o_menu_brand.o_nav_entry:hover {
+  border-bottom: none !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+.o_main_navbar .o_menu_brand::after,
+.o_main_navbar .o_menu_brand::before,
+.o_main_navbar .o_nav_entry::after,
+.o_main_navbar .o_nav_entry::before {
+  content: none !important;
+}
+
+.o_main_navbar .o_nav_entry,
+.o_main_navbar .o_menu_brand {
+  border-bottom: none !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+/* Bagian Ikon Grid: menjaga warna ikon grid supaya selalu navy dan konsisten dengan link navbar. */
+.o_main_navbar .o_navbar_apps_menu .dropdown-toggle i,
+.o_main_navbar .o_navbar_apps_menu .dropdown-toggle svg {
+  color: #04438C !important;
+  fill: #04438C !important;
+}
