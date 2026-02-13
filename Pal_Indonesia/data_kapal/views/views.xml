@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View list ini dipakai untuk melihat ringkasan semua data kapal/proyek sekaligus. -->
+    <record id="view_pal_kapal_proyek_list" model="ir.ui.view">
+        <field name="name">pal.kapal.proyek.list</field>
+        <field name="model">pal.kapal.proyek</field>
+        <field name="arch" type="xml">
+            <list string="Data Kapal dan Proyek">
+                <field name="nama_kapal"/>
+                <field name="nomor_proyek"/>
+                <field name="kelas_kapal_id"/>
+                <field name="delegasi_pemilik"/>
+                <field name="jenis_tes"/>
+                <field name="tanggal_input"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View form ini dipakai untuk input/edit detail data kapal dan proyek (CRUD utama). -->
+    <record id="view_pal_kapal_proyek_form" model="ir.ui.view">
+        <field name="name">pal.kapal.proyek.form</field>
+        <field name="model">pal.kapal.proyek</field>
+        <field name="arch" type="xml">
+            <form string="Data Kapal dan Proyek">
+                <sheet>
+                    <group string="Informasi Dasar TPTR">
+                        <field name="nama_kapal"/>
+                        <field name="nomor_proyek"/>
+                        <field name="kelas_kapal_id"/>
+                        <field name="kelas_kapal" readonly="1"/>
+                        <field name="delegasi_pemilik"/>
+                        <field name="jenis_tes"/>
+                        <field name="tanggal_input" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search view membantu user mencari data kapal/proyek lebih cepat lewat field penting. -->
+    <record id="view_pal_kapal_proyek_search" model="ir.ui.view">
+        <field name="name">pal.kapal.proyek.search</field>
+        <field name="model">pal.kapal.proyek</field>
+        <field name="arch" type="xml">
+            <search string="Cari Data Kapal">
+                <field name="nama_kapal"/>
+                <field name="nomor_proyek"/>
+                <field name="kelas_kapal_id"/>
+                <field name="delegasi_pemilik"/>
+                <filter string="Jenis Tes HAT" name="filter_jenis_hat" domain="[('jenis_tes', '=', 'hat')]"/>
+                <filter string="Jenis Tes SAT" name="filter_jenis_sat" domain="[('jenis_tes', '=', 'sat')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Kelas Kapal" name="group_kelas_kapal" context="{'group_by': 'kelas_kapal_id'}"/>
+                    <filter string="Jenis Tes" name="group_jenis_tes" context="{'group_by': 'jenis_tes'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action ini menentukan model apa yang dibuka dan mode tampilan list/form untuk CRUD. -->
+    <record id="action_pal_kapal_proyek" model="ir.actions.act_window">
+        <field name="name">Data Kapal &amp; Proyek</field>
+        <field name="res_model">pal.kapal.proyek</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tambahkan data kapal dan proyek pertama Anda.
+            </p>
+            <p>
+                Data ini menjadi referensi utama yang akan digunakan di hampir seluruh proses TPTR.
+            </p>
+        </field>
+    </record>
+
+    <!-- View master kelas kapal dipakai untuk CRUD daftar kelas yang akan dipilih di form proyek. -->
+    <record id="view_pal_kapal_kelas_list" model="ir.ui.view">
+        <field name="name">pal.kapal.kelas.list</field>
+        <field name="model">pal.kapal.kelas</field>
+        <field name="arch" type="xml">
+            <list string="Master Kelas Kapal" editable="bottom">
+                <field name="name"/>
+                <field name="keterangan"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pal_kapal_kelas_form" model="ir.ui.view">
+        <field name="name">pal.kapal.kelas.form</field>
+        <field name="model">pal.kapal.kelas</field>
+        <field name="arch" type="xml">
+            <form string="Master Kelas Kapal">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="keterangan"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pal_kapal_kelas_search" model="ir.ui.view">
+        <field name="name">pal.kapal.kelas.search</field>
+        <field name="model">pal.kapal.kelas</field>
+        <field name="arch" type="xml">
+            <search string="Cari Kelas Kapal">
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action master ini membuka halaman pengelolaan kelas kapal (create/read/update/delete). -->
+    <record id="action_pal_kapal_kelas" model="ir.actions.act_window">
+        <field name="name">Master Kelas Kapal</field>
+        <field name="res_model">pal.kapal.kelas</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu root dan submenu agar user bisa mengakses form CRUD dari navigasi backend Odoo. -->
+    <menuitem id="menu_pal_kapal_root" name="TPTR" sequence="10"/>
+    <menuitem
+        id="menu_pal_kapal_proyek"
+        name="Data Kapal &amp; Proyek"
+        parent="menu_pal_kapal_root"
+        action="action_pal_kapal_proyek"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_pal_kapal_kelas"
+        name="Master Kelas Kapal"
+        parent="menu_pal_kapal_root"
+        action="action_pal_kapal_kelas"
+        sequence="20"
+    />
+</odoo>

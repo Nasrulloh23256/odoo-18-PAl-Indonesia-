@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pal_kapal_proyek_user,access.pal.kapal.proyek.user,model_pal_kapal_proyek,base.group_user,1,1,1,1
+access_pal_kapal_kelas_user,access.pal.kapal.kelas.user,model_pal_kapal_kelas,base.group_user,1,1,1,1
