@@ -1,24 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-<!--
-        <template id="listing">
-          <ul>
-            <li t-foreach="objects" t-as="object">
-              <a t-attf-href="#{ root }/objects/#{ object.id }">
-                <t t-esc="object.display_name"/>
-              </a>
-            </li>
-          </ul>
-        </template>
-        <template id="object">
-          <h1><t t-esc="object.display_name"/></h1>
-          <dl>
-            <t t-foreach="object._fields" t-as="field">
-              <dt><t t-esc="field"/></dt>
-              <dd><t t-esc="object[field]"/></dd>
-            </t>
-          </dl>
-        </template>
--->
-    </data>
+    <!-- Override logo header website agar memakai logo PAL dari asset statis perusahaan. -->
+    <template id="pal_website_logo_override" inherit_id="website.option_header_brand_logo" name="PAL Website Logo Override">
+        <xpath expr="//span[@t-field='website.logo']" position="replace">
+            <img
+                src="/asset_register/static/src/img/pal_logo.svg"
+                width="180"
+                height="64"
+                class="img-fluid"
+                style="height: 64px !important; width: auto; max-height: none;"
+                alt="PAL Logo"
+                role="img"
+            />
+        </xpath>
+    </template>
+
 </odoo>

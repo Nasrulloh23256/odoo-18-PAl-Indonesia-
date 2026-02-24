@@ -1,0 +1,33 @@
+/* Override aksen ungu di area footer agar mengikuti warna navy brand PAL. */
+#wrapwrap footer {
+  --bs-primary: #2f68a8;
+  --bs-primary-rgb: 47, 104, 168;
+  --bs-link-color: #2f68a8;
+  --bs-link-hover-color: #4f82bc;
+  --o-color-1: #2f68a8;
+  --o-color-2: #4f82bc;
+}
+
+/* Mayoritas elemen interaktif di footer (link, bahasa, kontak) dipaksa ke navy. */
+#wrapwrap footer a,
+#wrapwrap footer .dropdown-toggle,
+#wrapwrap footer .js_language_selector a,
+#wrapwrap footer .o_footer_copyright_name {
+  color: #2f68a8 !important;
+}
+
+/* Teks beraksen primary (yang biasanya ungu) dipaksa ke navy juga. */
+#wrapwrap footer .text-primary,
+#wrapwrap footer .text-primary-emphasis,
+#wrapwrap footer [class*="text-primary"],
+#wrapwrap footer .o_brand_promotion,
+#wrapwrap footer .o_brand_promotion a {
+  color: #2f68a8 !important;
+}
+
+#wrapwrap footer a:hover,
+#wrapwrap footer a:focus,
+#wrapwrap footer .dropdown-toggle:hover,
+#wrapwrap footer .dropdown-toggle:focus {
+  color: #4f82bc !important;
+}

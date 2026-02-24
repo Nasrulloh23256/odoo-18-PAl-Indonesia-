@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TPTR Jasper Cover Sheet</title>
+    <link rel="stylesheet" href="/data_kapal/static/src/css/jasper_cover_page.css" />
+</head>
+<body>
+    <main class="jasper-page">
+        <section class="jasper-card">
+            <header class="jasper-header">
+                <h1>TPTR Jasper Cover Sheet</h1>
+                <p>Halaman HTML/CSS custom untuk memilih proyek lalu mengunduh PDF dari JasperReports.</p>
+            </header>
+
+            __STATUS_BLOCK__
+
+            <form action="/tptr/jasper-cover/download" method="post" class="jasper-form">
+                <input type="hidden" name="csrf_token" value="__CSRF_TOKEN__" />
+
+                <div class="field-group">
+                    <label for="project_id">Data Kapal &amp; Proyek</label>
+                    <select id="project_id" name="project_id" required>
+                        __PROJECT_OPTIONS__
+                    </select>
+                </div>
+
+                <section class="preview-box">
+                    <h2>Preview Data Laporan</h2>
+                    <div class="preview-grid">
+                        <article class="preview-item">
+                            <span class="item-label">Project Name</span>
+                            <span class="item-value" id="preview_project_name">__PROJECT_NAME__</span>
+                        </article>
+                        <article class="preview-item">
+                            <span class="item-label">Project No.</span>
+                            <span class="item-value" id="preview_project_no">__PROJECT_NO__</span>
+                        </article>
+                        <article class="preview-item">
+                            <span class="item-label">Owner</span>
+                            <span class="item-value" id="preview_owner">__OWNER__</span>
+                        </article>
+                        <article class="preview-item">
+                            <span class="item-label">Class</span>
+                            <span class="item-value" id="preview_class_name">__CLASS_NAME__</span>
+                        </article>
+                        <article class="preview-item">
+                            <span class="item-label">Drawing/Document Name</span>
+                            <span class="item-value" id="preview_drawing_name">__DRAWING_DOCUMENT_NAME__</span>
+                        </article>
+                        <article class="preview-item">
+                            <span class="item-label">Scale</span>
+                            <span class="item-value" id="preview_scale">__SCALE__</span>
+                        </article>
+                    </div>
+                </section>
+
+                <div class="actions">
+                    <button type="submit" class="btn-download">Unduh PDF Jasper</button>
+                    <a class="btn-back" href="/web#action=data_kapal.action_pal_kapal_proyek">Buka Data Kapal &amp; Proyek</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            var projectSelect = document.getElementById("project_id");
+
+            function textOrDash(value) {
+                return value && value.trim() ? value : "-";
+            }
+
+            function updatePreviewFromOption(option) {
+                if (!option) {
+                    return;
+                }
+                document.getElementById("preview_project_name").textContent = textOrDash(option.dataset.projectName || "");
+                document.getElementById("preview_project_no").textContent = textOrDash(option.dataset.projectNo || "");
+                document.getElementById("preview_owner").textContent = textOrDash(option.dataset.owner || "");
+                document.getElementById("preview_class_name").textContent = textOrDash(option.dataset.className || "");
+                document.getElementById("preview_drawing_name").textContent = textOrDash(option.dataset.drawingDocumentName || "");
+                document.getElementById("preview_scale").textContent = textOrDash(option.dataset.scale || "");
+            }
+
+            if (projectSelect) {
+                projectSelect.addEventListener("change", function () {
+                    updatePreviewFromOption(projectSelect.options[projectSelect.selectedIndex]);
+                });
+                updatePreviewFromOption(projectSelect.options[projectSelect.selectedIndex]);
+            }
+        })();
+    </script>
+</body>
+</html>

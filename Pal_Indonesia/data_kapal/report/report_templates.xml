@@ -1,0 +1,11 @@
+<odoo>
+    <report 
+        id="cover_sheet_report"
+        model="pal.kapal.proyek"
+        string="Cover Sheet Report"
+        report_type="jasper"
+        file="cover_sheet_report"
+        name="data_kapal.report.cover_sheet_report"
+        print_report_name="'Cover_Sheet_' + (object.nomor_proyek or object.nama_kapal or 'TPTR')"
+    />
+</odoo>

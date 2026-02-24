@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree view untuk memantau status review dan persetujuan dokumen TPTR. -->
+    <record id="view_tptr_review_persetujuan_list" model="ir.ui.view">
+        <field name="name">tptr.review.persetujuan.list</field>
+        <field name="model">tptr.review_persetujuan</field>
+        <field name="arch" type="xml">
+            <list string="Review &amp; Persetujuan">
+                <field name="tp_id"/>
+                <field name="status_review_internal"/>
+                <field name="status_review_class_owner_delegate"/>
+                <field name="tanda_tangan_shipyard"/>
+                <field name="tanda_tangan_class"/>
+                <field name="tanda_tangan_owner_delegate"/>
+                <field name="tanggal_input"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_tptr_review_persetujuan_form" model="ir.ui.view">
+        <field name="name">tptr.review.persetujuan.form</field>
+        <field name="model">tptr.review_persetujuan</field>
+        <field name="arch" type="xml">
+            <form string="Review &amp; Persetujuan">
+                <sheet>
+                    <group>
+                        <field name="tp_id"/>
+                        <field name="status_review_internal"/>
+                        <field name="status_review_class_owner_delegate"/>
+                        <field name="tanda_tangan_shipyard"/>
+                        <field name="tanda_tangan_class"/>
+                        <field name="tanda_tangan_owner_delegate"/>
+                        <field name="tanggal_input" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tptr_review_persetujuan_search" model="ir.ui.view">
+        <field name="name">tptr.review.persetujuan.search</field>
+        <field name="model">tptr.review_persetujuan</field>
+        <field name="arch" type="xml">
+            <search string="Cari Review &amp; Persetujuan">
+                <field name="tp_id"/>
+                <field name="status_review_internal"/>
+                <field name="status_review_class_owner_delegate"/>
+                <filter string="TTD Shipyard" name="signed_shipyard" domain="[('tanda_tangan_shipyard', '=', True)]"/>
+                <filter string="TTD Class" name="signed_class" domain="[('tanda_tangan_class', '=', True)]"/>
+                <filter string="TTD Owner Delegate" name="signed_owner_delegate" domain="[('tanda_tangan_owner_delegate', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action menu untuk fitur review & persetujuan TPTR. -->
+    <record id="action_tptr_review_persetujuan" model="ir.actions.act_window">
+        <field name="name">Review &amp; Persetujuan</field>
+        <field name="res_model">tptr.review_persetujuan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_tptr_review_persetujuan"
+        name="Review &amp; Persetujuan"
+        parent="menu_pal_kapal_root"
+        action="action_tptr_review_persetujuan"
+        sequence="50"
+    />
+
+    <!-- Sisipkan tab one2many Review & Persetujuan pada form Data Kapal & Proyek. -->
+    <record id="view_pal_kapal_proyek_form_inherit_review" model="ir.ui.view">
+        <field name="name">pal.kapal.proyek.form.inherit.review</field>
+        <field name="model">pal.kapal.proyek</field>
+        <field name="inherit_id" ref="data_kapal.view_pal_kapal_proyek_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="Review &amp; Persetujuan">
+                    <field name="review_ids" context="{'default_tp_id': id}">
+                        <list editable="bottom" string="Review &amp; Persetujuan">
+                            <field name="status_review_internal"/>
+                            <field name="status_review_class_owner_delegate"/>
+                            <field name="tanda_tangan_shipyard"/>
+                            <field name="tanda_tangan_class"/>
+                            <field name="tanda_tangan_owner_delegate"/>
+                            <field name="tanggal_input" readonly="1"/>
+                        </list>
+                        <form string="Review &amp; Persetujuan">
+                            <sheet>
+                                <group>
+                                    <field name="tp_id" readonly="1"/>
+                                    <field name="status_review_internal"/>
+                                    <field name="status_review_class_owner_delegate"/>
+                                    <field name="tanda_tangan_shipyard"/>
+                                    <field name="tanda_tangan_class"/>
+                                    <field name="tanda_tangan_owner_delegate"/>
+                                    <field name="tanggal_input" readonly="1"/>
+                                </group>
+                            </sheet>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

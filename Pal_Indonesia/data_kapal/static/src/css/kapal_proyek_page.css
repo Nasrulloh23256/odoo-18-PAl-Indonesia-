@@ -1,0 +1,267 @@
+.kapal-page {
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px 14px;
+    background:
+        radial-gradient(circle at 8% 10%, rgba(30, 82, 161, 0.13), transparent 42%),
+        radial-gradient(circle at 90% 0%, rgba(11, 41, 85, 0.14), transparent 34%),
+        linear-gradient(170deg, #e9eef6 0%, #dbe4f0 100%);
+    color: #0c1f3f;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.kapal-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.kapal-header {
+    background: #ffffff;
+    border: 1px solid #ccd8ea;
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px 20px;
+}
+
+.eyebrow {
+    margin: 0 0 3px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: #2a4f82;
+}
+
+.kapal-header h1 {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.2;
+    color: #08244d;
+}
+
+.subtitle {
+    margin: 6px 0 0;
+    color: #4c6283;
+}
+
+.header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.panel {
+    background: #ffffff;
+    border: 1px solid #d1dced;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(18, 43, 82, 0.07);
+}
+
+.panel-form {
+    padding: 18px 20px;
+}
+
+.panel-form h2,
+.panel-table h2 {
+    margin: 0;
+    color: #092a58;
+    font-size: 20px;
+}
+
+.grid {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.field span {
+    font-weight: 600;
+    color: #19365f;
+    font-size: 14px;
+}
+
+.field input,
+.field select {
+    height: 42px;
+    border: 1px solid #bfcee4;
+    border-radius: 8px;
+    padding: 0 11px;
+    font-size: 14px;
+    color: #0f2242;
+    background: #fcfdff;
+}
+
+.field input:focus,
+.field select:focus {
+    outline: none;
+    border-color: #2b5fa5;
+    box-shadow: 0 0 0 3px rgba(43, 95, 165, 0.15);
+}
+
+.form-actions {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.panel-table .panel-head {
+    padding: 16px 20px 8px;
+}
+
+.table-wrap {
+    overflow: auto;
+    border-top: 1px solid #d8e1ef;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+thead th {
+    text-align: left;
+    background: #f2f6fd;
+    color: #0f2e58;
+    border-bottom: 1px solid #d2dded;
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+tbody td {
+    border-bottom: 1px solid #e1e9f5;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #1a2f50;
+}
+
+tbody tr:hover {
+    background: #f8fbff;
+}
+
+.text-end {
+    text-align: right;
+}
+
+.inline-form {
+    display: inline-block;
+    margin-left: 6px;
+}
+
+.empty-row {
+    text-align: center;
+    color: #5a6e8b;
+    padding: 14px;
+}
+
+.btn {
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #0c3f80;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #082f61;
+}
+
+.btn-secondary {
+    background: #e7edf7;
+    color: #1f3760;
+}
+
+.btn-soft {
+    background: #ecf2fc;
+    color: #153869;
+}
+
+.btn-sm {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.btn-outline-primary {
+    border: 1px solid #2f5f9e;
+    color: #1f4f8a;
+    background: #ffffff;
+}
+
+.btn-outline-primary:hover {
+    background: #eaf2fd;
+}
+
+.btn-outline-danger {
+    border: 1px solid #cb4d4d;
+    color: #a92a2a;
+    background: #ffffff;
+}
+
+.btn-outline-danger:hover {
+    background: #fff0f0;
+}
+
+.alert {
+    border-radius: 10px;
+    border: 1px solid transparent;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.alert-danger {
+    background: #ffefef;
+    border-color: #f4bcbc;
+    color: #912727;
+}
+
+.alert-success {
+    background: #edf9f2;
+    border-color: #b4e4c5;
+    color: #1f6d3f;
+}
+
+.alert-warning {
+    background: #fff7e9;
+    border-color: #f2d299;
+    color: #8b5d08;
+}
+
+@media (max-width: 920px) {
+    .kapal-header {
+        flex-direction: column;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}

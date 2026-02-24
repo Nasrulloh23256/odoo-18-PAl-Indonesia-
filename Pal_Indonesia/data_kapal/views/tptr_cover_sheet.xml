@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Paper format khusus agar layout cover sheet stabil saat diekspor ke PDF. -->
+        <record id="paperformat_tptr_cover_sheet" model="report.paperformat">
+            <field name="name">TPTR Cover Sheet A4</field>
+            <field name="default" eval="False"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <!-- Action report untuk generate PDF cover sheet dari data proyek/kapal. -->
+        <record id="action_report_tptr_cover_sheet" model="ir.actions.report">
+            <field name="name">TPTR Cover Sheet</field>
+            <field name="model">pal.kapal.proyek</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">data_kapal.tptr_cover_sheet</field>
+            <field name="report_file">data_kapal.tptr_cover_sheet</field>
+            <field name="binding_model_id" ref="model_pal_kapal_proyek"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="data_kapal.paperformat_tptr_cover_sheet"/>
+            <field name="print_report_name">'Cover Sheet - %s' % (object.nomor_proyek or object.nama_kapal or 'TPTR')</field>
+        </record>
+
+        <!-- Tombol di form Data Kapal untuk mengunduh cover sheet PDF. -->
+        <record id="view_pal_kapal_proyek_form_inherit_cover_sheet_button" model="ir.ui.view">
+            <field name="name">pal.kapal.proyek.form.inherit.cover.sheet.button</field>
+            <field name="model">pal.kapal.proyek</field>
+            <field name="inherit_id" ref="data_kapal.view_pal_kapal_proyek_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="before">
+                    <header>
+                        <button
+                            name="action_download_cover_sheet"
+                            type="object"
+                            string="Unduh Cover Sheet PDF"
+                            class="btn-primary"
+                        />
+                        <button
+                            name="action_download_cover_sheet_jasper"
+                            type="object"
+                            string="Unduh Cover Sheet (Jasper)"
+                            class="btn-secondary"
+                        />
+                    </header>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Template QWeb utama cover sheet (nama template: tptr.cover_sheet). -->
+        <template id="tptr_cover_sheet" name="tptr.cover_sheet">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="cover" t-value="doc._get_cover_sheet_data()"/>
+                    <t t-call="web.basic_layout">
+                        <div class="page tptr-cover-page">
+                            <style>
+                                .tptr-cover-page { font-family: Arial, sans-serif; font-size: 9px; color: #000; }
+                                .tptr-cover-page table { border-collapse: collapse; width: 100%; }
+                                .tptr-cover-page th, .tptr-cover-page td { border: 1px solid #000; padding: 2px 3px; vertical-align: middle; }
+                                .tptr-cover-page .vhead {
+                                    writing-mode: vertical-rl;
+                                    transform: rotate(180deg);
+                                    text-align: center;
+                                    font-weight: 700;
+                                    letter-spacing: 1px;
+                                    min-width: 18px;
+                                    width: 18px;
+                                }
+                                .tptr-cover-page .rev-title { font-size: 18px; letter-spacing: 4px; font-weight: 700; text-align: center; }
+                                .tptr-cover-page .rev-subtitle { font-size: 10px; font-weight: 700; text-align: center; margin-top: 6px; }
+                                .tptr-cover-page .rev-col-mod { width: 46%; }
+                                .tptr-cover-page .big-empty-box {
+                                    height: 300px;
+                                    border-left: 1px solid #000;
+                                    border-right: 1px solid #000;
+                                    border-bottom: 1px solid #000;
+                                }
+                                .tptr-cover-page .meta-table td { vertical-align: top; }
+                                .tptr-cover-page .meta-title { font-weight: 700; }
+                                .tptr-cover-page .meta-value { padding-left: 4px; }
+                                .tptr-cover-page .signature-table td, .tptr-cover-page .signature-table th { font-size: 9px; }
+                                .tptr-cover-page .logo-block { text-align: center; vertical-align: middle; height: 90px; }
+                                .tptr-cover-page .logo-block img { max-height: 62px; width: auto; }
+                                .tptr-cover-page .text-center { text-align: center; }
+                                .tptr-cover-page .text-right { text-align: right; }
+                                .tptr-cover-page .small { font-size: 8px; }
+                            </style>
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="vhead">SHEET</th>
+                                        <th class="vhead">INDEX</th>
+                                        <th class="vhead">REV</th>
+                                        <th class="vhead">MODIFICATION</th>
+                                        <th class="vhead">ZONE</th>
+                                        <th class="vhead">DATE</th>
+                                        <th class="rev-col-mod" colspan="2">
+                                            <div class="rev-title">REVISION</div>
+                                            <div class="rev-title">AND</div>
+                                            <div class="rev-title">MODIFICATION</div>
+                                            <div class="rev-subtitle">DESCRIPTION</div>
+                                        </th>
+                                        <th class="vhead">DRAWN BY</th>
+                                        <th class="vhead">DESIGNED BY</th>
+                                        <th class="vhead">CHECKED BY</th>
+                                        <th class="vhead">APPROVED BY</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="cover['revision_rows']" t-as="line">
+                                        <tr>
+                                            <td class="text-center"><t t-esc="line['sheet']"/></td>
+                                            <td class="text-center"><t t-esc="line['index']"/></td>
+                                            <td class="text-center"><t t-esc="line['rev']"/></td>
+                                            <td class="text-center"><t t-esc="line['modification']"/></td>
+                                            <td class="text-center"><t t-esc="line['zone']"/></td>
+                                            <td class="text-center"><t t-esc="line['date']"/></td>
+                                            <td colspan="2"></td>
+                                            <td class="text-center"><t t-esc="line['drawn_by']"/></td>
+                                            <td class="text-center"><t t-esc="line['designed_by']"/></td>
+                                            <td class="text-center"><t t-esc="line['checked_by']"/></td>
+                                            <td class="text-center"><t t-esc="line['approved_by']"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <div class="big-empty-box"></div>
+
+                            <table class="meta-table">
+                                <tr>
+                                    <td style="width:27%;">
+                                        <span class="meta-title">YEAR :</span>
+                                        <span class="meta-value"><t t-esc="cover['year']"/></span>
+                                    </td>
+                                    <td style="width:46%;">
+                                        <span class="meta-title">PROJECT NAME :</span>
+                                        <span class="meta-value"><t t-esc="cover['project_name']"/></span>
+                                    </td>
+                                    <td style="width:27%;">
+                                        <span class="meta-title">PROJECT NO. :</span>
+                                        <span class="meta-value"><t t-esc="cover['project_no']"/></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table class="signature-table">
+                                            <tr>
+                                                <th></th>
+                                                <th class="text-center">DATE</th>
+                                                <th class="text-center">APPROVAL</th>
+                                            </tr>
+                                            <tr>
+                                                <td>DRAWN BY</td>
+                                                <td class="text-center"><t t-esc="cover['approval_date']"/></td>
+                                                <td class="text-center"><t t-esc="cover['drawn_by_status']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>DESIGNED BY</td>
+                                                <td class="text-center"><t t-esc="cover['approval_date']"/></td>
+                                                <td class="text-center"><t t-esc="cover['designed_by_status']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>CHECKED BY</td>
+                                                <td class="text-center"><t t-esc="cover['approval_date']"/></td>
+                                                <td class="text-center"><t t-esc="cover['checked_by_status']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>APPROVED BY</td>
+                                                <td class="text-center"><t t-esc="cover['approval_date']"/></td>
+                                                <td class="text-center"><t t-esc="cover['approved_by_status']"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <div><span class="meta-title">DRAWING / DOCUMENT NAME :</span> <span class="meta-value"><t t-esc="cover['drawing_document_name']"/></span></div>
+                                        <div class="logo-block">
+                                            <img src="/asset_register/static/src/img/pal_logo.png" alt="PAL Indonesia"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr><td class="meta-title">OWNER :</td><td><t t-esc="cover['owner']"/></td></tr>
+                                            <tr><td class="meta-title">CLASS :</td><td><t t-esc="cover['class_name']"/></td></tr>
+                                            <tr><td class="meta-title">DESIGNER :</td><td><t t-esc="cover['designer']"/></td></tr>
+                                            <tr><td class="meta-title">GROUP :</td><td><t t-esc="cover['group_name']"/></td></tr>
+                                            <tr><td class="meta-title">SCALE :</td><td><t t-esc="cover['scale']"/></td></tr>
+                                            <tr><td class="meta-title">SIZE :</td><td><t t-esc="cover['size']"/></td></tr>
+                                            <tr><td class="meta-title">SHEET :</td><td><t t-esc="cover['sheet_label']"/></td></tr>
+                                            <tr><td class="meta-title">DRW./ DOCUMENT NO. :</td><td><t t-esc="cover['drw_document_no']"/></td></tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="small text-center">ALL RIGHTS RESERVED<br/>ARE PROPERTY OF PT. PAL INDONESIA</td>
+                                    <td class="small text-center">PAL INDONESIA</td>
+                                    <td class="text-center">
+                                        <span class="meta-title">REV.</span>
+                                        <span style="display:inline-block; margin-left:6px;">
+                                            <span style="border:1px solid #000; padding:1px 6px;">0</span>
+                                            <span style="border:1px solid #000; padding:1px 6px;">1</span>
+                                            <span style="border:1px solid #000; padding:1px 6px;">2</span>
+                                            <span style="border:1px solid #000; padding:1px 6px;">3</span>
+                                            <span style="border:1px solid #000; padding:1px 6px;">4</span>
+                                            <span style="border:1px solid #000; padding:1px 6px;">5</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

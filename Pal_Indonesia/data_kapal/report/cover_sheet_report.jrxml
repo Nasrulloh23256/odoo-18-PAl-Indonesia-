@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="cover_sheet_report"
+    pageWidth="595"
+    pageHeight="842"
+    columnWidth="595"
+    leftMargin="0"
+    rightMargin="0"
+    topMargin="0"
+    bottomMargin="0"
+    whenNoDataType="AllSectionsNoDetail">
+
+    <!-- Parameter utama (PascalCase) -->
+    <parameter name="ProjectName" class="java.lang.String"/>
+    <parameter name="ProjectNo" class="java.lang.String"/>
+    <parameter name="Owner" class="java.lang.String"/>
+    <parameter name="Class" class="java.lang.String"/>
+    <parameter name="DrawingName" class="java.lang.String"/>
+    <parameter name="Scale" class="java.lang.String"/>
+    <parameter name="Sheet" class="java.lang.String"/>
+    <parameter name="Index" class="java.lang.String"/>
+    <parameter name="Rev" class="java.lang.String"/>
+    <parameter name="Modification" class="java.lang.String"/>
+    <parameter name="Zone" class="java.lang.String"/>
+    <parameter name="Date" class="java.lang.String"/>
+
+    <!-- Parameter fallback (snake_case) dari Odoo -->
+    <parameter name="project_name" class="java.lang.String"/>
+    <parameter name="project_no" class="java.lang.String"/>
+    <parameter name="owner" class="java.lang.String"/>
+    <parameter name="class_name" class="java.lang.String"/>
+    <parameter name="drawing_document_name" class="java.lang.String"/>
+    <parameter name="scale" class="java.lang.String"/>
+    <parameter name="sheet_label" class="java.lang.String"/>
+    <parameter name="drw_document_no" class="java.lang.String"/>
+    <parameter name="year" class="java.lang.String"/>
+    <parameter name="size" class="java.lang.String"/>
+    <parameter name="designer" class="java.lang.String"/>
+    <parameter name="group_name" class="java.lang.String"/>
+    <parameter name="approval_date" class="java.lang.String"/>
+
+    <!-- Status tanda tangan opsional -->
+    <parameter name="drawn_by_status" class="java.lang.String"/>
+    <parameter name="designed_by_status" class="java.lang.String"/>
+    <parameter name="checked_by_status" class="java.lang.String"/>
+    <parameter name="approved_by_status" class="java.lang.String"/>
+    <parameter name="logo_path" class="java.lang.String"/>
+    <parameter name="project_symbol_url" class="java.lang.String"/>
+    <parameter name="ProjectSymbolUrl" class="java.lang.String"/>
+
+    <title>
+        <band height="842">
+            <!-- Border utama -->
+            <rectangle>
+                <reportElement x="5" y="5" width="585" height="832"/>
+            </rectangle>
+
+            <!-- Top revision table -->
+            <rectangle>
+                <reportElement x="5" y="5" width="585" height="304"/>
+            </rectangle>
+
+            <!-- Kolom vertikal top table -->
+            <line><reportElement x="35" y="5" width="0" height="304"/></line>
+            <line><reportElement x="65" y="5" width="0" height="304"/></line>
+            <line><reportElement x="95" y="5" width="0" height="304"/></line>
+            <line><reportElement x="125" y="5" width="0" height="304"/></line>
+            <line><reportElement x="155" y="5" width="0" height="304"/></line>
+            <line><reportElement x="185" y="5" width="0" height="304"/></line>
+            <line><reportElement x="450" y="5" width="0" height="304"/></line>
+            <line><reportElement x="485" y="5" width="0" height="304"/></line>
+            <line><reportElement x="520" y="5" width="0" height="304"/></line>
+            <line><reportElement x="555" y="5" width="0" height="304"/></line>
+
+            <!-- Horizontal header/detail -->
+            <line><reportElement x="5" y="165" width="585" height="0"/></line>
+            <line><reportElement x="5" y="183" width="585" height="0"/></line>
+            <line><reportElement x="5" y="201" width="585" height="0"/></line>
+            <line><reportElement x="5" y="219" width="585" height="0"/></line>
+            <line><reportElement x="5" y="237" width="585" height="0"/></line>
+            <line><reportElement x="5" y="255" width="585" height="0"/></line>
+            <line><reportElement x="5" y="273" width="585" height="0"/></line>
+            <line><reportElement x="5" y="291" width="585" height="0"/></line>
+            <line><reportElement x="185" y="115" width="265" height="0"/></line>
+
+            <!-- Header vertikal -->
+            <staticText>
+                <reportElement x="8" y="10" width="24" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[S
+H
+E
+E
+T]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="38" y="10" width="24" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[I
+N
+D
+E
+X]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="68" y="10" width="24" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[R
+E
+V]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="98" y="10" width="24" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[M
+O
+D
+I
+F
+I
+C
+A
+T
+I
+O
+N]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="128" y="10" width="24" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Z
+O
+N
+E]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="158" y="10" width="24" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[D
+A
+T
+E]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="452" y="10" width="31" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[D
+R
+A
+W
+N
+
+B
+Y]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="487" y="10" width="31" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[D
+E
+S
+I
+G
+N
+E
+D
+
+B
+Y]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="522" y="10" width="31" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[C
+H
+E
+C
+K
+E
+D
+
+B
+Y]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="557" y="10" width="31" height="150"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[A
+P
+P
+R
+O
+V
+E
+D
+
+B
+Y]]></text>
+            </staticText>
+
+            <!-- Title revision -->
+            <staticText>
+                <reportElement x="185" y="28" width="265" height="78"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="17" isBold="true"/>
+                </textElement>
+                <text><![CDATA[REVISION
+AND
+MODIFICATION]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="185" y="121" width="265" height="35"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DESCRIPTION]]></text>
+            </staticText>
+
+            <!-- Data baris pertama -->
+            <textField isBlankWhenNull="true">
+                <reportElement x="8" y="167" width="24" height="14"/>
+                <textElement textAlignment="Center"><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[$P{Sheet}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="38" y="167" width="24" height="14"/>
+                <textElement textAlignment="Center"><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[$P{Index}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="68" y="167" width="24" height="14"/>
+                <textElement textAlignment="Center"><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[$P{Rev}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="98" y="167" width="24" height="14"/>
+                <textElement textAlignment="Center"><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[$P{Modification}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="128" y="167" width="24" height="14"/>
+                <textElement textAlignment="Center"><font size="9"/></textElement>
+                <textFieldExpression><![CDATA[$P{Zone}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="158" y="167" width="24" height="14"/>
+                <textElement textAlignment="Center"><font size="8"/></textElement>
+                <textFieldExpression><![CDATA[$P{Date} != null ? $P{Date} : $P{approval_date}]]></textFieldExpression>
+            </textField>
+
+            <textField isBlankWhenNull="true">
+                <reportElement x="452" y="167" width="31" height="14"/>
+                <textElement textAlignment="Center"><font size="8"/></textElement>
+                <textFieldExpression><![CDATA[$P{drawn_by_status}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="487" y="167" width="31" height="14"/>
+                <textElement textAlignment="Center"><font size="8"/></textElement>
+                <textFieldExpression><![CDATA[$P{designed_by_status}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="522" y="167" width="31" height="14"/>
+                <textElement textAlignment="Center"><font size="8"/></textElement>
+                <textFieldExpression><![CDATA[$P{checked_by_status}]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="557" y="167" width="31" height="14"/>
+                <textElement textAlignment="Center"><font size="8"/></textElement>
+                <textFieldExpression><![CDATA[$P{approved_by_status}]]></textFieldExpression>
+            </textField>
+
+            <!-- Area kosong tengah -->
+            <rectangle>
+                <reportElement x="5" y="309" width="585" height="271"/>
+            </rectangle>
+
+            <!-- Bottom block -->
+            <rectangle>
+                <reportElement x="5" y="580" width="585" height="257"/>
+            </rectangle>
+            <line><reportElement x="165" y="580" width="0" height="257"/></line>
+            <line><reportElement x="435" y="580" width="0" height="257"/></line>
+            <line><reportElement x="5" y="610" width="585" height="0"/></line>
+
+            <!-- Row atas bottom -->
+            <staticText>
+                <reportElement x="12" y="587" width="50" height="16"/>
+                <textElement><font size="10" isBold="true"/></textElement>
+                <text><![CDATA[YEAR :]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="66" y="587" width="92" height="16"/>
+                <textElement><font size="12" isBold="true"/></textElement>
+                <textFieldExpression><![CDATA[$P{year}]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="172" y="585" width="120" height="14"/>
+                <textElement><font size="10" isBold="false"/></textElement>
+                <text><![CDATA[PROJECT NAME :]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="172" y="594" width="262" height="15"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="15" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{ProjectName} != null && $P{ProjectName}.length() > 0 ? $P{ProjectName} : $P{project_name}]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="442" y="585" width="92" height="14"/>
+                <textElement><font size="10" isBold="false"/></textElement>
+                <text><![CDATA[PROJECT NO. :]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="442" y="592" width="143" height="18"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{ProjectNo} != null && $P{ProjectNo}.length() > 0 ? $P{ProjectNo} : $P{project_no}]]></textFieldExpression>
+            </textField>
+
+            <!-- Signature table kiri -->
+            <line><reportElement x="98" y="610" width="0" height="150"/></line>
+            <line><reportElement x="130" y="610" width="0" height="150"/></line>
+            <line><reportElement x="5" y="635" width="160" height="0"/></line>
+            <line><reportElement x="5" y="666" width="160" height="0"/></line>
+            <line><reportElement x="5" y="697" width="160" height="0"/></line>
+            <line><reportElement x="5" y="728" width="160" height="0"/></line>
+            <line><reportElement x="5" y="760" width="160" height="0"/></line>
+            <line><reportElement x="5" y="800" width="160" height="0"/></line>
+
+            <staticText>
+                <reportElement x="100" y="617" width="28" height="13"/>
+                <textElement textAlignment="Center"><font size="8" isBold="true"/></textElement>
+                <text><![CDATA[DATE]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="132" y="617" width="31" height="13"/>
+                <textElement textAlignment="Center"><font size="6" isBold="true"/></textElement>
+                <text><![CDATA[APPROVAL]]></text>
+            </staticText>
+
+            <staticText><reportElement x="12" y="640" width="82" height="18"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[DRAWN BY]]></text></staticText>
+            <staticText><reportElement x="12" y="671" width="82" height="18"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[DESIGNED BY]]></text></staticText>
+            <staticText><reportElement x="12" y="702" width="82" height="18"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[CHECKED BY]]></text></staticText>
+            <staticText><reportElement x="12" y="733" width="82" height="18"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[APPROVED BY]]></text></staticText>
+
+            <textField isBlankWhenNull="true"><reportElement x="100" y="640" width="28" height="18"/><textElement textAlignment="Center"><font size="8"/></textElement><textFieldExpression><![CDATA[$P{Date} != null ? $P{Date} : $P{approval_date}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="100" y="671" width="28" height="18"/><textElement textAlignment="Center"><font size="8"/></textElement><textFieldExpression><![CDATA[$P{Date} != null ? $P{Date} : $P{approval_date}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="100" y="702" width="28" height="18"/><textElement textAlignment="Center"><font size="8"/></textElement><textFieldExpression><![CDATA[$P{Date} != null ? $P{Date} : $P{approval_date}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="100" y="733" width="28" height="18"/><textElement textAlignment="Center"><font size="8"/></textElement><textFieldExpression><![CDATA[$P{Date} != null ? $P{Date} : $P{approval_date}]]></textFieldExpression></textField>
+
+            <textField isBlankWhenNull="true"><reportElement x="132" y="640" width="31" height="18"/><textElement textAlignment="Center"><font size="8"/></textElement><textFieldExpression><![CDATA[$P{drawn_by_status}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="132" y="671" width="31" height="18"/><textElement textAlignment="Center"><font size="8"/></textElement><textFieldExpression><![CDATA[$P{designed_by_status}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="132" y="702" width="31" height="18"/><textElement textAlignment="Center"><font size="8"/></textElement><textFieldExpression><![CDATA[$P{checked_by_status}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="132" y="733" width="31" height="18"/><textElement textAlignment="Center"><font size="8"/></textElement><textFieldExpression><![CDATA[$P{approved_by_status}]]></textFieldExpression></textField>
+
+            <!-- Bagian tengah bawah -->
+            <line><reportElement x="165" y="760" width="270" height="0"/></line>
+            <staticText>
+                <reportElement x="172" y="616" width="188" height="18"/>
+                <textElement><font size="10" isBold="false"/></textElement>
+                <text><![CDATA[DRAWING / DOCUMENT NAME :]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true" isStretchWithOverflow="true">
+                <reportElement x="172" y="640" width="256" height="115"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="13" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{DrawingName} != null && $P{DrawingName}.length() > 0 ? $P{DrawingName} : $P{drawing_document_name}]]></textFieldExpression>
+            </textField>
+
+            <!-- Logo PAL Indonesia pada area tengah bawah -->
+            <image scaleImage="RetainShape" onErrorType="Blank">
+                <reportElement x="196" y="786" width="205" height="46"/>
+                <imageExpression><![CDATA[$P{logo_path} != null && $P{logo_path}.trim().length() > 0 ? $P{logo_path} : "D:/Odoo/odoo-18.0/Pal_Indonesia/data_kapal/assets/img/pal_logo.png"]]></imageExpression>
+            </image>
+
+            <!-- Detail kanan -->
+            <line><reportElement x="435" y="635" width="155" height="0"/></line>
+            <line><reportElement x="435" y="666" width="155" height="0"/></line>
+            <line><reportElement x="435" y="697" width="155" height="0"/></line>
+            <line><reportElement x="435" y="728" width="155" height="0"/></line>
+            <line><reportElement x="435" y="760" width="155" height="0"/></line>
+            <line><reportElement x="435" y="780" width="155" height="0"/></line>
+            <line><reportElement x="435" y="800" width="155" height="0"/></line>
+            <line><reportElement x="435" y="820" width="155" height="0"/></line>
+
+            <staticText><reportElement x="442" y="616" width="62" height="14"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[OWNER]]></text></staticText>
+            <staticText><reportElement x="442" y="641" width="62" height="14"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[CLASS]]></text></staticText>
+            <staticText><reportElement x="442" y="672" width="62" height="14"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[DESIGNER]]></text></staticText>
+            <staticText><reportElement x="442" y="703" width="62" height="14"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[GROUP]]></text></staticText>
+            <staticText><reportElement x="442" y="734" width="62" height="14"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[SCALE]]></text></staticText>
+            <staticText><reportElement x="442" y="763" width="62" height="14"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[SIZE]]></text></staticText>
+            <staticText><reportElement x="442" y="783" width="62" height="14"/><textElement><font size="10" isBold="false"/></textElement><text><![CDATA[SHEET]]></text></staticText>
+            <staticText><reportElement x="442" y="803" width="64" height="14"/><textElement><font size="8" isBold="false"/></textElement><text><![CDATA[DRW./ DOC]]></text></staticText>
+
+            <staticText><reportElement x="501" y="616" width="6" height="14"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[:]]></text></staticText>
+            <staticText><reportElement x="501" y="641" width="6" height="14"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[:]]></text></staticText>
+            <staticText><reportElement x="501" y="672" width="6" height="14"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[:]]></text></staticText>
+            <staticText><reportElement x="501" y="703" width="6" height="14"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[:]]></text></staticText>
+            <staticText><reportElement x="501" y="734" width="6" height="14"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[:]]></text></staticText>
+            <staticText><reportElement x="501" y="763" width="6" height="14"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[:]]></text></staticText>
+            <staticText><reportElement x="501" y="783" width="6" height="14"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[:]]></text></staticText>
+            <staticText><reportElement x="501" y="803" width="6" height="14"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[:]]></text></staticText>
+
+            <textField isBlankWhenNull="true"><reportElement x="510" y="616" width="76" height="14"/><textElement><font size="10"/></textElement><textFieldExpression><![CDATA[$P{Owner} != null && $P{Owner}.length() > 0 ? $P{Owner} : $P{owner}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="510" y="641" width="76" height="14"/><textElement><font size="10"/></textElement><textFieldExpression><![CDATA[$P{Class} != null && $P{Class}.length() > 0 ? $P{Class} : $P{class_name}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="510" y="672" width="76" height="14"/><textElement><font size="10"/></textElement><textFieldExpression><![CDATA[$P{designer}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="510" y="703" width="76" height="14"/><textElement><font size="10"/></textElement><textFieldExpression><![CDATA[$P{group_name}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="510" y="734" width="76" height="14"/><textElement><font size="10"/></textElement><textFieldExpression><![CDATA[$P{Scale} != null && $P{Scale}.length() > 0 ? $P{Scale} : $P{scale}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="510" y="763" width="76" height="14"/><textElement><font size="10"/></textElement><textFieldExpression><![CDATA[$P{size} != null && $P{size}.length() > 0 ? $P{size} : "A4"]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="510" y="783" width="76" height="14"/><textElement><font size="10"/></textElement><textFieldExpression><![CDATA[$P{sheet_label} != null && $P{sheet_label}.length() > 0 ? $P{sheet_label} : $P{Sheet}]]></textFieldExpression></textField>
+            <textField isBlankWhenNull="true"><reportElement x="438" y="802" width="148" height="16"/><textElement textAlignment="Center" verticalAlignment="Middle"><font size="12" isBold="true"/></textElement><textFieldExpression><![CDATA[$P{drw_document_no}]]></textFieldExpression></textField>
+
+            <!-- Bottom left -->
+            <line><reportElement x="5" y="800" width="160" height="0"/></line>
+            <staticText>
+                <reportElement x="12" y="764" width="146" height="32"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ALL RIGHTS RESERVED
+ARE PROPERTY OF PT. PAL INDONESIA]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="12" y="803" width="110" height="12"/>
+                <textElement><font size="9" isBold="true"/></textElement>
+                <text><![CDATA[PROJECT SYMBOL]]></text>
+            </staticText>
+            <image scaleImage="RetainShape" onErrorType="Blank" hAlign="Center" vAlign="Middle">
+                <reportElement x="12" y="814" width="147" height="20"/>
+                <imageExpression><![CDATA[$P{ProjectSymbolUrl} != null && $P{ProjectSymbolUrl}.trim().length() > 0 ? $P{ProjectSymbolUrl} : $P{project_symbol_url}]]></imageExpression>
+            </image>
+
+            <!-- REV box kanan bawah -->
+            <staticText>
+                <reportElement x="438" y="821" width="38" height="15"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[REV.]]></text>
+            </staticText>
+
+            <rectangle><reportElement x="476" y="820" width="19" height="17"/></rectangle>
+            <rectangle><reportElement x="495" y="820" width="19" height="17"/></rectangle>
+            <rectangle><reportElement x="514" y="820" width="19" height="17"/></rectangle>
+            <rectangle><reportElement x="533" y="820" width="19" height="17"/></rectangle>
+            <rectangle><reportElement x="552" y="820" width="19" height="17"/></rectangle>
+            <rectangle><reportElement x="571" y="820" width="19" height="17"/></rectangle>
+
+            <ellipse><reportElement x="478" y="822" width="15" height="13"/></ellipse>
+            <staticText><reportElement x="483" y="824" width="6" height="10"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[0]]></text></staticText>
+            <staticText><reportElement x="502" y="824" width="6" height="10"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[1]]></text></staticText>
+            <staticText><reportElement x="521" y="824" width="6" height="10"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[2]]></text></staticText>
+            <staticText><reportElement x="540" y="824" width="6" height="10"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[3]]></text></staticText>
+            <staticText><reportElement x="559" y="824" width="6" height="10"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[4]]></text></staticText>
+            <staticText><reportElement x="578" y="824" width="6" height="10"/><textElement textAlignment="Center"><font size="10" isBold="true"/></textElement><text><![CDATA[5]]></text></staticText>
+        </band>
+    </title>
+</jasperReport>

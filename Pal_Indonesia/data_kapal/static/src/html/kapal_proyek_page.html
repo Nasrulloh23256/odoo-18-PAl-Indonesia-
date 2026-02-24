@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TPTR Data Kapal &amp; Proyek</title>
+    <link rel="stylesheet" href="/data_kapal/static/src/css/kapal_proyek_page.css" />
+</head>
+<body>
+    <main class="kapal-page">
+        <section class="kapal-shell">
+            <header class="kapal-header">
+                <div class="header-left">
+                    <p class="eyebrow">TPTR Workspace</p>
+                    <h1>Data Kapal &amp; Proyek</h1>
+                    <p class="subtitle">__PAGE_SUBTITLE__</p>
+                </div>
+                <div class="header-actions">
+                    <a class="btn btn-soft" href="/tptr/jasper-cover">Halaman Jasper</a>
+                    <a class="btn btn-soft" href="/web#action=data_kapal.action_pal_kapal_proyek">Backend Odoo</a>
+                </div>
+            </header>
+
+            __STATUS_BLOCK__
+
+            <section class="panel panel-form">
+                <h2>__FORM_TITLE__</h2>
+                <form action="__FORM_ACTION__" method="post">
+                    <input type="hidden" name="csrf_token" value="__CSRF_TOKEN__" />
+
+                    <div class="grid">
+                        <label class="field">
+                            <span>Nama Kapal</span>
+                            <input type="text" name="nama_kapal" value="__NAMA_KAPAL__" required />
+                        </label>
+
+                        <label class="field">
+                            <span>Nomor Proyek</span>
+                            <input type="text" name="nomor_proyek" value="__NOMOR_PROYEK__" required />
+                        </label>
+
+                        <label class="field">
+                            <span>Kelas Kapal</span>
+                            <select name="kelas_kapal_id" required>
+                                __KELAS_KAPAL_OPTIONS__
+                            </select>
+                        </label>
+
+                        <label class="field">
+                            <span>Delegasi Pemilik</span>
+                            <input type="text" name="delegasi_pemilik" value="__DELEGASI_PEMILIK__" required />
+                        </label>
+
+                        <label class="field">
+                            <span>Jenis Tes</span>
+                            <select name="jenis_tes" required>
+                                <option value="hat"__JENIS_HAT_SELECTED__>HAT</option>
+                                <option value="sat"__JENIS_SAT_SELECTED__>SAT</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">__SUBMIT_LABEL__</button>
+                        __CANCEL_EDIT_BUTTON__
+                    </div>
+                </form>
+            </section>
+
+            <section class="panel panel-table">
+                <div class="panel-head">
+                    <h2>Daftar Data Kapal &amp; Proyek</h2>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Kapal</th>
+                                <th>Nomor Proyek</th>
+                                <th>Kelas Kapal</th>
+                                <th>Delegasi Pemilik</th>
+                                <th>Jenis Tes</th>
+                                <th>Tanggal Input</th>
+                                <th class="text-end">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            __TABLE_ROWS__
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </main>
+</body>
+</html>

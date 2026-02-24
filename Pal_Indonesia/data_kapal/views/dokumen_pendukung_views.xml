@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree view daftar dokumen pendukung untuk monitoring cepat per proyek/kapal. -->
+    <record id="view_tptr_dokumen_pendukung_list" model="ir.ui.view">
+        <field name="name">tptr.dokumen.pendukung.list</field>
+        <field name="model">tptr.dokumen_pendukung</field>
+        <field name="arch" type="xml">
+            <list string="Dokumen Pendukung">
+                <field name="tp_id"/>
+                <field name="referensi_desain"/>
+                <field name="dokumen_maker"/>
+                <field name="tanggal_input"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_tptr_dokumen_pendukung_form" model="ir.ui.view">
+        <field name="name">tptr.dokumen.pendukung.form</field>
+        <field name="model">tptr.dokumen_pendukung</field>
+        <field name="arch" type="xml">
+            <form string="Dokumen Pendukung">
+                <sheet>
+                    <group>
+                        <field name="tp_id"/>
+                        <field name="referensi_desain"/>
+                        <field name="dokumen_maker"/>
+                        <field name="keterangan"/>
+                        <field name="tanggal_input" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tptr_dokumen_pendukung_search" model="ir.ui.view">
+        <field name="name">tptr.dokumen.pendukung.search</field>
+        <field name="model">tptr.dokumen_pendukung</field>
+        <field name="arch" type="xml">
+            <search string="Cari Dokumen Pendukung">
+                <field name="tp_id"/>
+                <field name="referensi_desain"/>
+                <field name="dokumen_maker"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action menu utama untuk fitur dokumen pendukung TPTR. -->
+    <record id="action_tptr_dokumen_pendukung" model="ir.actions.act_window">
+        <field name="name">Dokumen Pendukung</field>
+        <field name="res_model">tptr.dokumen_pendukung</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_tptr_dokumen_pendukung"
+        name="Dokumen Pendukung"
+        parent="menu_pal_kapal_root"
+        action="action_tptr_dokumen_pendukung"
+        sequence="40"
+    />
+
+    <!-- Sisipkan tab one2many Dokumen Pendukung pada form Data Kapal & Proyek. -->
+    <record id="view_pal_kapal_proyek_form_inherit_dokumen" model="ir.ui.view">
+        <field name="name">pal.kapal.proyek.form.inherit.dokumen</field>
+        <field name="model">pal.kapal.proyek</field>
+        <field name="inherit_id" ref="data_kapal.view_pal_kapal_proyek_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="Dokumen Pendukung">
+                    <field name="dokumen_ids" context="{'default_tp_id': id}">
+                        <list editable="bottom" string="Dokumen Pendukung">
+                            <field name="referensi_desain"/>
+                            <field name="dokumen_maker"/>
+                            <field name="tanggal_input" readonly="1"/>
+                        </list>
+                        <form string="Dokumen Pendukung">
+                            <sheet>
+                                <group>
+                                    <field name="tp_id" readonly="1"/>
+                                    <field name="referensi_desain"/>
+                                    <field name="dokumen_maker"/>
+                                    <field name="keterangan"/>
+                                    <field name="tanggal_input" readonly="1"/>
+                                </group>
+                            </sheet>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
