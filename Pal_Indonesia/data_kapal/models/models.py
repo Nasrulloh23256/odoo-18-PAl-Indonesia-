@@ -2,12 +2,14 @@
 
 import base64
 import logging
+from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+from odoo.modules.module import get_module_resource
 
 
 _logger = logging.getLogger(__name__)
@@ -120,6 +122,109 @@ class PalKapalProyek(models.Model):
         string="Review & Persetujuan",
     )
 
+    # Ringkasan ini dipakai untuk tampilan utama TPTR agar user cepat melihat status dokumen.
+    nomor_dokumen_utama = fields.Char(
+        string="Nomor Document",
+        compute="_compute_tptr_ringkasan",
+        store=True,
+        readonly=True,
+    )
+    nama_dokumen_utama = fields.Char(
+        string="Nama Document",
+        compute="_compute_tptr_ringkasan",
+        store=True,
+        readonly=True,
+    )
+    tanggal_dibuat_document = fields.Datetime(
+        string="Tanggal Dibuat Document",
+        compute="_compute_tptr_ringkasan",
+        store=True,
+        readonly=True,
+    )
+    terakhir_diedit_document = fields.Datetime(
+        string="Terakhir Diedit",
+        compute="_compute_tptr_ringkasan",
+        store=True,
+        readonly=True,
+    )
+    status_tptr = fields.Char(
+        string="Status",
+        compute="_compute_tptr_ringkasan",
+        store=True,
+        readonly=True,
+    )
+
+    @api.depends(
+        "dokumen_ids.dokumen_maker",
+        "dokumen_ids.referensi_desain",
+        "dokumen_ids.tanggal_input",
+        "dokumen_ids.create_date",
+        "dokumen_ids.write_date",
+        "review_ids.status_review_internal",
+        "review_ids.status_review_class_owner_delegate",
+        "review_ids.tanda_tangan_shipyard",
+        "review_ids.tanda_tangan_class",
+        "review_ids.tanda_tangan_owner_delegate",
+        "review_ids.tanggal_input",
+    )
+    def _compute_tptr_ringkasan(self):
+        # Ambil data terbaru per proyek/kapal agar list utama TPTR selalu menampilkan kondisi terakhir.
+        dokumen_map = {}
+        review_map = {}
+
+        if self.ids:
+            dokumen_records = self.env["tptr.dokumen_pendukung"].search(
+                [("tp_id", "in", self.ids)],
+                order="tp_id, tanggal_input desc, id desc",
+            )
+            for row in dokumen_records:
+                tp_id = row.tp_id.id
+                if tp_id not in dokumen_map:
+                    dokumen_map[tp_id] = row
+
+            review_records = self.env["tptr.review_persetujuan"].search(
+                [("tp_id", "in", self.ids)],
+                order="tp_id, tanggal_input desc, id desc",
+            )
+            for row in review_records:
+                tp_id = row.tp_id.id
+                if tp_id not in review_map:
+                    review_map[tp_id] = row
+
+        for rec in self:
+            latest_dokumen = dokumen_map.get(rec.id)
+            latest_review = review_map.get(rec.id)
+
+            rec.nomor_dokumen_utama = latest_dokumen.dokumen_maker if latest_dokumen else "-"
+            rec.nama_dokumen_utama = latest_dokumen.referensi_desain if latest_dokumen else "-"
+            rec.tanggal_dibuat_document = latest_dokumen.create_date if latest_dokumen else False
+            rec.terakhir_diedit_document = latest_dokumen.write_date if latest_dokumen else False
+
+            if not latest_dokumen:
+                rec.status_tptr = "Menunggu Dokumen"
+                continue
+            if not latest_review:
+                rec.status_tptr = "Butuh Persetujuan"
+                continue
+
+            pending_items = []
+            if latest_review.status_review_internal != "ya":
+                pending_items.append("Review Internal")
+            if latest_review.status_review_class_owner_delegate != "ya":
+                pending_items.append("Review Class/Owner")
+            if not latest_review.tanda_tangan_shipyard:
+                pending_items.append("TTD Shipyard")
+            if not latest_review.tanda_tangan_class:
+                pending_items.append("TTD Class")
+            if not latest_review.tanda_tangan_owner_delegate:
+                pending_items.append("TTD Owner Delegate")
+
+            rec.status_tptr = (
+                "Disetujui"
+                if not pending_items
+                else "Butuh Persetujuan: %s" % ", ".join(pending_items)
+            )
+
     # Tombol ini dipakai untuk mengunduh cover sheet PDF dari form Data Kapal & Proyek.
     def action_download_cover_sheet(self):
         self.ensure_one()
@@ -183,6 +288,7 @@ class PalKapalProyek(models.Model):
             "owner": cover["owner"],
             "class_name": cover["class_name"],
             "drawing_document_name": cover["drawing_document_name"],
+            "summary_document_name": cover["summary_document_name"],
             "drw_document_no": cover["drw_document_no"],
             "designer": cover["designer"],
             "group_name": cover["group_name"],
@@ -192,6 +298,20 @@ class PalKapalProyek(models.Model):
             "year": str(cover["year"]),
             "approval_date": cover["approval_date"],
             "project_symbol_url": cover["project_symbol_url"],
+            "test_type_label": cover["test_type_label"],
+            "project_full_label": cover["project_full_label"],
+            "document_footer_label": cover["document_footer_label"],
+            "summary_footer_label": cover["summary_footer_label"],
+            "approval_class_label": cover["approval_class_label"],
+            "approval_owner_label": cover["approval_owner_label"],
+            "drawn_by_date": cover["drawn_by_date"],
+            "designed_by_date": cover["designed_by_date"],
+            "checked_by_date": cover["checked_by_date"],
+            "approved_by_date": cover["approved_by_date"],
+            # URL logo PAL dikirim sebagai parameter agar JRXML tidak memakai path lokal komputer.
+            "logo_path": self._get_pal_logo_url(),
+            # Fallback path lokal Jasper Server (file URI) untuk kasus HTTP image diblokir.
+            "logo_local_path": self._get_pal_logo_file_uri(),
             "generated_at": fields.Datetime.to_string(fields.Datetime.now()),
             "tp_id": str(self.id),
         }
@@ -201,6 +321,11 @@ class PalKapalProyek(models.Model):
             # Parameter PascalCase dipakai JRXML baru yang dibuat di Jaspersoft Studio.
             "ProjectName": common_values["project_name"],
             "ProjectNo": common_values["project_no"],
+            # Alias tambahan untuk kompatibilitas template Jasper dengan style naming berbeda.
+            "PROJECT_NAME": common_values["project_name"],
+            "PROJECT_NO": common_values["project_no"],
+            "projectName": common_values["project_name"],
+            "projectNo": common_values["project_no"],
             "Owner": common_values["owner"],
             "Class": common_values["class_name"],
             "DrawingName": common_values["drawing_document_name"],
@@ -246,6 +371,25 @@ class PalKapalProyek(models.Model):
             return "%s/web/image/%s?access_token=%s" % (base_url, attachment.id, access_token)
         return "%s/web/image/%s" % (base_url, attachment.id)
 
+    # URL absolut logo PAL untuk dipakai elemen image di JRXML melalui parameter logo_path.
+    def _get_pal_logo_url(self):
+        self.ensure_one()
+        base_url = (self.env["ir.config_parameter"].sudo().get_param("web.base.url") or "").strip().rstrip("/")
+        if not base_url:
+            return ""
+        return "%s/data_kapal/static/src/img/pal_logo.png" % base_url
+
+    # Fallback file URI lokal untuk Jasper saat resource URL HTTP tidak bisa diambil.
+    def _get_pal_logo_file_uri(self):
+        self.ensure_one()
+        logo_file = (
+            get_module_resource("data_kapal", "static", "src", "img", "pal_logo.png")
+            or get_module_resource("data_kapal", "assets", "img", "pal_logo.png")
+        )
+        if not logo_file:
+            return ""
+        return Path(logo_file).resolve().as_uri()
+
     # Request PDF ke JasperReports Server melalui REST API.
     def _get_jasper_cover_sheet_pdf(self):
         self.ensure_one()
@@ -271,6 +415,23 @@ class PalKapalProyek(models.Model):
             raise UserError("Jasper tidak mengembalikan konten PDF.")
         return pdf_content
 
+    def _get_summary_document_name(self, document_name):
+        self.ensure_one()
+        label = " ".join(((document_name or "-").replace("\r", " ").replace("\n", " ")).split())
+        normalized = label.upper()
+        prefixes = (
+            "TEST PROCEDURE AND TEST RECORD OF ",
+            "TEST PROCEDURE AND TEST RECORD ",
+            "TEST PROCEDURE OF ",
+            "TEST PROCEDURE ",
+            "TEST RECORD OF ",
+        )
+        for prefix in prefixes:
+            if normalized.startswith(prefix):
+                trimmed = label[len(prefix) :].strip(" :-")
+                return trimmed or label
+        return label
+
     # Kumpulan data ini dipakai template QWeb untuk mengisi cover sheet secara otomatis.
     def _get_cover_sheet_data(self):
         self.ensure_one()
@@ -286,6 +447,9 @@ class PalKapalProyek(models.Model):
         def _yes_no(value):
             return "Ya" if value else "Tidak"
 
+        def _name_or_status(name_value, status_value):
+            return (name_value or "").strip() or _yes_no(status_value)
+
         table_rows = []
         for idx, row in enumerate(review_rows, start=1):
             table_rows.append(
@@ -296,10 +460,10 @@ class PalKapalProyek(models.Model):
                     "modification": row.status_review_class_owner_delegate and row.status_review_class_owner_delegate.upper() or "-",
                     "zone": latest_lokasi.lokasi_pengujian if latest_lokasi else "-",
                     "date": fields.Datetime.to_string(row.tanggal_input) if row.tanggal_input else "-",
-                    "drawn_by": _yes_no(row.tanda_tangan_shipyard),
-                    "designed_by": _yes_no(row.tanda_tangan_class),
-                    "checked_by": _yes_no(row.tanda_tangan_owner_delegate),
-                    "approved_by": _yes_no(row.tanda_tangan_owner_delegate),
+                    "drawn_by": _name_or_status(row.drawn_by_name, row.tanda_tangan_shipyard),
+                    "designed_by": _name_or_status(row.designed_by_name, row.tanda_tangan_class),
+                    "checked_by": _name_or_status(row.checked_by_name, row.tanda_tangan_owner_delegate),
+                    "approved_by": _name_or_status(row.approved_by_name, row.tanda_tangan_owner_delegate),
                 }
             )
 
@@ -320,12 +484,27 @@ class PalKapalProyek(models.Model):
             )
 
         now_dt = fields.Datetime.now()
+        drawing_name = latest_dokumen.referensi_desain or "-"
+        drw_no = latest_dokumen.dokumen_maker or "-"
+        summary_document_name = self._get_summary_document_name(drawing_name)
+        test_type_label = "Harbor Acceptance Test" if self.jenis_tes == "hat" else "Sea Acceptance Test"
+        project_full_label = "%s / %s" % (self.nama_kapal or "-", self.nomor_proyek or "-")
+        document_footer_label = "%s - %s" % (drw_no, drawing_name)
+        summary_footer_label = "%s - %s" % (drw_no, summary_document_name)
+        approval_class_label = "%s CLASS" % (self.kelas_kapal or "-")
+        approval_owner_label = self.delegasi_pemilik or "Delegate Team"
+        fallback_review_date = fields.Date.to_date(latest_review.tanggal_input) if latest_review and latest_review.tanggal_input else fields.Date.context_today(self)
+        drawn_by_date = latest_review.tanggal_drawn_by if latest_review and latest_review.tanggal_drawn_by else fallback_review_date
+        designed_by_date = latest_review.tanggal_designed_by if latest_review and latest_review.tanggal_designed_by else fallback_review_date
+        checked_by_date = latest_review.tanggal_checked_by if latest_review and latest_review.tanggal_checked_by else fallback_review_date
+        approved_by_date = latest_review.tanggal_approved_by if latest_review and latest_review.tanggal_approved_by else fallback_review_date
         return {
             "year": now_dt.year,
             "project_name": self.nama_kapal or "-",
             "project_no": self.nomor_proyek or "-",
-            "drawing_document_name": latest_dokumen.referensi_desain or "-",
-            "drw_document_no": latest_dokumen.dokumen_maker or "-",
+            "drawing_document_name": drawing_name,
+            "summary_document_name": summary_document_name,
+            "drw_document_no": drw_no,
             "owner": self.delegasi_pemilik or "-",
             "class_name": self.kelas_kapal or "-",
             "designer": latest_lokasi.name if latest_lokasi else "-",
@@ -333,10 +512,20 @@ class PalKapalProyek(models.Model):
             "scale": "-",
             "size": "A4",
             "sheet_label": "1 of 1",
-            "drawn_by_status": _yes_no(latest_review.tanda_tangan_shipyard) if latest_review else "Tidak",
-            "designed_by_status": _yes_no(latest_review.tanda_tangan_class) if latest_review else "Tidak",
-            "checked_by_status": _yes_no(latest_review.tanda_tangan_owner_delegate) if latest_review else "Tidak",
-            "approved_by_status": _yes_no(latest_review.tanda_tangan_owner_delegate) if latest_review else "Tidak",
+            "test_type_label": test_type_label,
+            "project_full_label": project_full_label,
+            "document_footer_label": document_footer_label,
+            "summary_footer_label": summary_footer_label,
+            "approval_class_label": approval_class_label,
+            "approval_owner_label": approval_owner_label,
+            "drawn_by_date": fields.Date.to_string(drawn_by_date) if drawn_by_date else "-",
+            "designed_by_date": fields.Date.to_string(designed_by_date) if designed_by_date else "-",
+            "checked_by_date": fields.Date.to_string(checked_by_date) if checked_by_date else "-",
+            "approved_by_date": fields.Date.to_string(approved_by_date) if approved_by_date else "-",
+            "drawn_by_status": _name_or_status(latest_review.drawn_by_name, latest_review.tanda_tangan_shipyard) if latest_review else "Tidak",
+            "designed_by_status": _name_or_status(latest_review.designed_by_name, latest_review.tanda_tangan_class) if latest_review else "Tidak",
+            "checked_by_status": _name_or_status(latest_review.checked_by_name, latest_review.tanda_tangan_owner_delegate) if latest_review else "Tidak",
+            "approved_by_status": _name_or_status(latest_review.approved_by_name, latest_review.tanda_tangan_owner_delegate) if latest_review else "Tidak",
             "approval_date": fields.Datetime.to_string(latest_review.tanggal_input) if latest_review and latest_review.tanggal_input else fields.Datetime.to_string(now_dt),
             "project_symbol_url": self._get_project_symbol_image_url(),
             "revision_rows": table_rows,

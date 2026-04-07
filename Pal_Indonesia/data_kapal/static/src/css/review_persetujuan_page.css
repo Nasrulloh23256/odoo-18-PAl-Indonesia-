@@ -1,0 +1,272 @@
+.review-page {
+    min-height: 100vh;
+    margin: 0;
+    padding: 26px 12px;
+    background:
+        radial-gradient(circle at 4% 0%, rgba(27, 66, 133, 0.13), transparent 38%),
+        radial-gradient(circle at 100% 0%, rgba(9, 39, 92, 0.15), transparent 43%),
+        linear-gradient(165deg, #edf2fa 0%, #dee8f5 100%);
+    color: #10284b;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.review-shell {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.review-header,
+.review-project-picker,
+.review-meta,
+.review-layout {
+    background: #ffffff;
+    border: 1px solid #d2deef;
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px 18px;
+    align-items: flex-start;
+}
+
+.review-header h1 {
+    margin: 0;
+    font-size: 34px;
+    color: #0c2f62;
+}
+
+.review-header p {
+    margin: 7px 0 0;
+    color: #4f6283;
+}
+
+.review-shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.review-project-picker label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #173860;
+}
+
+.picker-row {
+    display: flex;
+    gap: 8px;
+}
+
+.picker-row select {
+    flex: 1;
+    min-height: 42px;
+    border: 1px solid #c4d3e9;
+    border-radius: 8px;
+    padding: 0 10px;
+}
+
+.review-meta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.review-meta article {
+    background: #f8fbff;
+    border: 1px solid #dae4f2;
+    border-radius: 8px;
+    padding: 8px 10px;
+}
+
+.review-meta article.wide {
+    grid-column: span 2;
+}
+
+.review-meta span {
+    display: block;
+    color: #5a6f91;
+    font-size: 12px;
+}
+
+.review-meta strong {
+    display: block;
+    margin-top: 4px;
+    color: #102d56;
+    font-size: 15px;
+}
+
+.review-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 12px;
+}
+
+.preview-card,
+.form-card {
+    border: 1px solid #d7e1ef;
+    border-radius: 10px;
+    background: #fbfdff;
+    padding: 12px;
+}
+
+.preview-card h2,
+.form-card h2 {
+    margin: 0;
+    color: #0d3164;
+}
+
+.preview-card p {
+    margin: 6px 0 10px;
+    color: #586d8f;
+}
+
+.preview-card iframe {
+    width: 100%;
+    min-height: 680px;
+    border: 1px solid #c9d7eb;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.review-form {
+    margin-top: 10px;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.review-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.review-form label span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a3a64;
+}
+
+.review-form input,
+.review-form select {
+    min-height: 40px;
+    border: 1px solid #c4d3e9;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #112748;
+}
+
+.check-row {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+}
+
+.check-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    color: #173a67;
+}
+
+.actions {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.btn-primary,
+.btn-soft {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    border: 0;
+    cursor: pointer;
+    padding: 10px 14px;
+}
+
+.btn-primary {
+    background: #0f407e;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #0b2f5d;
+}
+
+.btn-soft {
+    background: #e8eff9;
+    color: #1b3d6e;
+}
+
+.btn-soft:hover {
+    background: #dce8f8;
+}
+
+.alert {
+    border-radius: 9px;
+    border: 1px solid transparent;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background: #edf8f1;
+    border-color: #bbe5ca;
+    color: #1d6f42;
+}
+
+.alert-warning {
+    background: #fff7e9;
+    border-color: #f5d9a2;
+    color: #7f5608;
+}
+
+.alert-danger {
+    background: #ffeceb;
+    border-color: #f3c4c2;
+    color: #8d2222;
+}
+
+@media (max-width: 1100px) {
+    .review-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-card iframe {
+        min-height: 520px;
+    }
+}
+
+@media (max-width: 760px) {
+    .review-header {
+        flex-direction: column;
+    }
+
+    .picker-row,
+    .grid-2,
+    .review-meta {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+
+    .review-meta article.wide {
+        grid-column: auto;
+    }
+}

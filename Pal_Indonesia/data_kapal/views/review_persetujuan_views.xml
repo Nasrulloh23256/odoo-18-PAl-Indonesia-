@@ -12,6 +12,14 @@
                 <field name="tanda_tangan_shipyard"/>
                 <field name="tanda_tangan_class"/>
                 <field name="tanda_tangan_owner_delegate"/>
+                <field name="drawn_by_name"/>
+                <field name="designed_by_name"/>
+                <field name="checked_by_name"/>
+                <field name="approved_by_name"/>
+                <field name="tanggal_drawn_by"/>
+                <field name="tanggal_designed_by"/>
+                <field name="tanggal_checked_by"/>
+                <field name="tanggal_approved_by"/>
                 <field name="tanggal_input"/>
             </list>
         </field>
@@ -23,15 +31,43 @@
         <field name="arch" type="xml">
             <form string="Review &amp; Persetujuan">
                 <sheet>
-                    <group>
-                        <field name="tp_id"/>
-                        <field name="status_review_internal"/>
-                        <field name="status_review_class_owner_delegate"/>
-                        <field name="tanda_tangan_shipyard"/>
-                        <field name="tanda_tangan_class"/>
-                        <field name="tanda_tangan_owner_delegate"/>
-                        <field name="tanggal_input" readonly="1"/>
-                    </group>
+                    <notebook>
+                        <page string="Informasi Umum">
+                            <group>
+                                <field name="tp_id"/>
+                                <field name="status_review_internal"/>
+                                <field name="status_review_class_owner_delegate"/>
+                                <field name="tanggal_input" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Drawn By">
+                            <group>
+                                <field name="drawn_by_name"/>
+                                <field name="tanggal_drawn_by"/>
+                                <field name="tanda_tangan_shipyard"/>
+                            </group>
+                        </page>
+                        <page string="Designed By">
+                            <group>
+                                <field name="designed_by_name"/>
+                                <field name="tanggal_designed_by"/>
+                                <field name="tanda_tangan_class"/>
+                            </group>
+                        </page>
+                        <page string="Checked By">
+                            <group>
+                                <field name="checked_by_name"/>
+                                <field name="tanggal_checked_by"/>
+                                <field name="tanda_tangan_owner_delegate"/>
+                            </group>
+                        </page>
+                        <page string="Approved By">
+                            <group>
+                                <field name="approved_by_name"/>
+                                <field name="tanggal_approved_by"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -82,19 +118,55 @@
                             <field name="tanda_tangan_shipyard"/>
                             <field name="tanda_tangan_class"/>
                             <field name="tanda_tangan_owner_delegate"/>
+                            <field name="drawn_by_name"/>
+                            <field name="designed_by_name"/>
+                            <field name="checked_by_name"/>
+                            <field name="approved_by_name"/>
+                            <field name="tanggal_drawn_by"/>
+                            <field name="tanggal_designed_by"/>
+                            <field name="tanggal_checked_by"/>
+                            <field name="tanggal_approved_by"/>
                             <field name="tanggal_input" readonly="1"/>
                         </list>
                         <form string="Review &amp; Persetujuan">
                             <sheet>
-                                <group>
-                                    <field name="tp_id" readonly="1"/>
-                                    <field name="status_review_internal"/>
-                                    <field name="status_review_class_owner_delegate"/>
-                                    <field name="tanda_tangan_shipyard"/>
-                                    <field name="tanda_tangan_class"/>
-                                    <field name="tanda_tangan_owner_delegate"/>
-                                    <field name="tanggal_input" readonly="1"/>
-                                </group>
+                                <notebook>
+                                    <page string="Informasi Umum">
+                                        <group>
+                                            <field name="tp_id" readonly="1"/>
+                                            <field name="status_review_internal"/>
+                                            <field name="status_review_class_owner_delegate"/>
+                                            <field name="tanggal_input" readonly="1"/>
+                                        </group>
+                                    </page>
+                                    <page string="Drawn By">
+                                        <group>
+                                            <field name="drawn_by_name"/>
+                                            <field name="tanggal_drawn_by"/>
+                                            <field name="tanda_tangan_shipyard"/>
+                                        </group>
+                                    </page>
+                                    <page string="Designed By">
+                                        <group>
+                                            <field name="designed_by_name"/>
+                                            <field name="tanggal_designed_by"/>
+                                            <field name="tanda_tangan_class"/>
+                                        </group>
+                                    </page>
+                                    <page string="Checked By">
+                                        <group>
+                                            <field name="checked_by_name"/>
+                                            <field name="tanggal_checked_by"/>
+                                            <field name="tanda_tangan_owner_delegate"/>
+                                        </group>
+                                    </page>
+                                    <page string="Approved By">
+                                        <group>
+                                            <field name="approved_by_name"/>
+                                            <field name="tanggal_approved_by"/>
+                                        </group>
+                                    </page>
+                                </notebook>
                             </sheet>
                         </form>
                     </field>

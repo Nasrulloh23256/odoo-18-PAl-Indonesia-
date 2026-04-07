@@ -360,44 +360,189 @@ class DataKapalWebsiteController(http.Controller):
             )
         return '<ol class="wizard-stepper">%s</ol>' % "".join(items)
 
+    def _format_wizard_datetime(self, value: Any) -> str:
+        if not value:
+            return "-"
+        if hasattr(value, "strftime"):
+            return value.strftime("%d/%m/%Y %H:%M")
+        return str(value)
+
+    def _get_wizard_status_class(self, status_label: str) -> str:
+        normalized = (status_label or "").strip().lower()
+        if normalized.startswith("disetujui"):
+            return "wizard-status-success"
+        if normalized.startswith("menunggu"):
+            return "wizard-status-waiting"
+        return "wizard-status-progress"
+
     # Ringkasan project aktif agar user selalu tahu konteks project yang sedang diisi.
-    def _build_cover_wizard_project_summary(self, project: Any) -> str:
-        if not project:
-            return (
-                '<section class="wizard-project-summary empty">'
-                '<h2>Project Aktif</h2>'
-                '<p>Belum ada project aktif. Mulai dari Step 1 untuk membuat data baru.</p>'
-                "</section>"
+    def _build_cover_wizard_project_summary(self, project: Any, current_step: int) -> str:
+        records = request.env["pal.kapal.proyek"].search([], order="id desc")
+        active_id = project.id if project else None
+        safe_step = max(int(current_step or 1), 1)
+        record_total = len(records)
+
+        rows = []
+        for rec in records:
+            row_css = ' class="is-active"' if active_id and rec.id == active_id else ""
+            status_label = rec.status_tptr or "-"
+            nomor_dokumen = html.escape(rec.nomor_dokumen_utama or "-", quote=True)
+            nama_dokumen = html.escape(rec.nama_dokumen_utama or "-", quote=True)
+            nama_project = html.escape(rec.nama_kapal or "-", quote=True)
+            nomor_proyek = html.escape(rec.nomor_proyek or "-", quote=True)
+            owner = html.escape(rec.delegasi_pemilik or "-", quote=True)
+            tanggal_dibuat = html.escape(self._format_wizard_datetime(rec.tanggal_dibuat_document), quote=True)
+            terakhir_diedit = html.escape(self._format_wizard_datetime(rec.terakhir_diedit_document), quote=True)
+            rows.append(
+                (
+                    "<tr{row_css}>"
+                    '<td class="wizard-col-doc-no">'
+                    '<div class="wizard-cell-stack">'
+                    '<span class="wizard-cell-chip" title="{nomor_dokumen}">{nomor_dokumen}</span>'
+                    '<span class="wizard-cell-meta" title="{nomor_proyek}">{nomor_proyek}</span>'
+                    "</div>"
+                    "</td>"
+                    '<td class="wizard-col-doc-name">'
+                    '<div class="wizard-cell-clamp" title="{nama_dokumen}">{nama_dokumen}</div>'
+                    "</td>"
+                    '<td class="wizard-col-project">'
+                    '<div class="wizard-cell-stack">'
+                    '<strong class="wizard-cell-primary" title="{nama_project}">{nama_project}</strong>'
+                    '<span class="wizard-cell-meta" title="{owner}">{owner}</span>'
+                    "</div>"
+                    "</td>"
+                    '<td class="wizard-col-created"><div class="wizard-cell-datetime">{tanggal_dibuat}</div></td>'
+                    '<td class="wizard-col-updated"><div class="wizard-cell-datetime">{terakhir_diedit}</div></td>'
+                    '<td class="wizard-col-status"><span class="wizard-status {status_css}">{status}</span></td>'
+                    '<td class="wizard-row-links">'
+                    '<div class="wizard-row-action-group">'
+                    '<a class="wizard-link" href="/tptr/cover-wizard?step={step}&project_id={id}">Lanjutkan</a>'
+                    '<a class="wizard-link wizard-link-soft" href="/web#id={id}&model=pal.kapal.proyek&view_type=form">Backend</a>'
+                    "</div>"
+                    "</td>"
+                    "</tr>"
+                ).format(
+                    row_css=row_css,
+                    nomor_dokumen=nomor_dokumen,
+                    nama_dokumen=nama_dokumen,
+                    nama_project=nama_project,
+                    nomor_proyek=nomor_proyek,
+                    owner=owner,
+                    tanggal_dibuat=tanggal_dibuat,
+                    terakhir_diedit=terakhir_diedit,
+                    status_css=self._get_wizard_status_class(status_label),
+                    status=html.escape(status_label, quote=True),
+                    step=safe_step,
+                    id=rec.id,
+                )
             )
 
-        lokasi_count = request.env["tptr.lokasi_kelas"].search_count([("kapal_id", "=", project.id)])
-        dokumen_count = request.env["tptr.dokumen_pendukung"].search_count([("tp_id", "=", project.id)])
-        review_count = request.env["tptr.review_persetujuan"].search_count([("tp_id", "=", project.id)])
+        if not rows:
+            rows.append(
+                '<tr><td colspan="7" class="wizard-empty-row">Belum ada data TPTR. Mulai dari Step 1 untuk membuat project baru.</td></tr>'
+            )
+
+        active_panel = (
+            '<div class="wizard-active-panel empty">'
+            '<div class="wizard-active-top">'
+            '<div class="wizard-active-copy">'
+            '<p class="wizard-section-badge">PROJECT AKTIF</p>'
+            '<h3>Belum ada project aktif</h3>'
+            '<p>Pilih project dari tabel TPTR Pusat atau mulai dari Step 1 untuk membuat data baru.</p>'
+            "</div>"
+            '<div class="wizard-active-side">'
+            '<span class="wizard-active-pill">Siap Mulai</span>'
+            '<a class="wizard-btn wizard-btn-primary" href="/tptr/cover-wizard?step=1">Buat Project Baru</a>'
+            "</div>"
+            "</div>"
+            "</div>"
+        )
+        if project:
+            lokasi_count = request.env["tptr.lokasi_kelas"].search_count([("kapal_id", "=", project.id)])
+            dokumen_count = request.env["tptr.dokumen_pendukung"].search_count([("tp_id", "=", project.id)])
+            review_count = request.env["tptr.review_persetujuan"].search_count([("tp_id", "=", project.id)])
+            active_panel = (
+                '<div class="wizard-active-panel">'
+                '<div class="wizard-active-top">'
+                '<div class="wizard-active-copy">'
+                '<p class="wizard-section-badge">PROJECT AKTIF</p>'
+                '<h3>{project}</h3>'
+                '<p>{project_no} | {kelas} | {owner}</p>'
+                "</div>"
+                '<div class="wizard-active-side">'
+                '<span class="wizard-active-pill">Step {step}</span>'
+                "</div>"
+                "</div>"
+                '<div class="wizard-project-grid">'
+                '<article><span>Nomor Dokumen</span><strong>{nomor_dokumen}</strong></article>'
+                '<article><span>Nama Dokumen</span><strong>{nama_dokumen}</strong></article>'
+                '<article><span>Progress Data</span><strong>L{lokasi} / D{dokumen} / R{review}</strong></article>'
+                '<article><span>Status TPTR</span><strong>{status}</strong></article>'
+                "</div>"
+                '<div class="wizard-project-actions">'
+                '<a class="wizard-btn wizard-btn-soft" href="/tptr/jasper-cover?project_id={id}">Buka Jasper Cover</a>'
+                '<a class="wizard-btn wizard-btn-soft" href="/web#id={id}&model=pal.kapal.proyek&view_type=form">Buka Form Backend</a>'
+                "</div>"
+                "</div>"
+            ).format(
+                project=html.escape(project.nama_kapal or "-", quote=True),
+                project_no=html.escape(project.nomor_proyek or "-", quote=True),
+                kelas=html.escape(project.kelas_kapal or "-", quote=True),
+                owner=html.escape(project.delegasi_pemilik or "-", quote=True),
+                nomor_dokumen=html.escape(project.nomor_dokumen_utama or "-", quote=True),
+                nama_dokumen=html.escape(project.nama_dokumen_utama or "-", quote=True),
+                lokasi=lokasi_count,
+                dokumen=dokumen_count,
+                review=review_count,
+                status=html.escape(project.status_tptr or "-", quote=True),
+                id=project.id,
+                step=safe_step,
+            )
 
         return (
             '<section class="wizard-project-summary">'
-            '<h2>Project Aktif: {project}</h2>'
-            '<div class="wizard-project-grid">'
-            '<article><span>Nomor Proyek</span><strong>{project_no}</strong></article>'
-            '<article><span>Kelas Kapal</span><strong>{kelas}</strong></article>'
-            '<article><span>Delegasi Pemilik</span><strong>{owner}</strong></article>'
-            '<article><span>Progress Data</span><strong>L{lokasi} / D{dokumen} / R{review}</strong></article>'
+            '<div class="wizard-panel-head">'
+            '<div>'
+            '<p class="wizard-section-badge">TPTR PUSAT</p>'
+            '<h2>Ringkasan TPTR seperti halaman backend</h2>'
+            '<p class="wizard-summary-subtitle">Kolom utama backend TPTR ditampilkan di wizard agar monitoring project tetap terpusat.</p>'
             "</div>"
-            '<div class="wizard-project-actions">'
-            '<a class="wizard-btn wizard-btn-soft" href="/tptr/jasper-cover?project_id={id}">Buka Jasper Cover</a>'
-            '<a class="wizard-btn wizard-btn-soft" href="/web#id={id}&model=pal.kapal.proyek&view_type=form">Buka Form Backend</a>'
+            '<img class="wizard-panel-logo" src="/data_kapal/static/src/img/pal_logo.svg" alt="PAL Indonesia" />'
+            "</div>"
+            "{active_panel}"
+            '<div class="wizard-hub-toolbar">'
+            '<div>'
+            '<strong>{record_total} project terdaftar</strong>'
+            '<p>Pilih satu baris untuk melanjutkan wizard atau buka form backend jika perlu edit penuh.</p>'
+            "</div>"
+            "</div>"
+            '<div class="wizard-hub-table-wrap">'
+            '<table class="wizard-hub-table">'
+            "<colgroup>"
+            '<col class="wizard-col-doc-no" />'
+            '<col class="wizard-col-doc-name" />'
+            '<col class="wizard-col-project" />'
+            '<col class="wizard-col-created" />'
+            '<col class="wizard-col-updated" />'
+            '<col class="wizard-col-status" />'
+            '<col class="wizard-col-actions" />'
+            "</colgroup>"
+            "<thead>"
+            "<tr>"
+            '<th class="wizard-col-doc-no">Nomor Dokumen</th>'
+            '<th class="wizard-col-doc-name">Nama Dokumen</th>'
+            '<th class="wizard-col-project">Nama Project</th>'
+            '<th class="wizard-col-created">Tanggal Dibuat</th>'
+            '<th class="wizard-col-updated">Terakhir Diedit</th>'
+            '<th class="wizard-col-status">Status TPTR</th>'
+            '<th class="text-end wizard-col-actions">Aksi</th>'
+            "</tr>"
+            "</thead>"
+            "<tbody>{rows}</tbody>"
+            "</table>"
             "</div>"
             "</section>"
-        ).format(
-            project=html.escape(project.nama_kapal or "-", quote=True),
-            project_no=html.escape(project.nomor_proyek or "-", quote=True),
-            kelas=html.escape(project.kelas_kapal or "-", quote=True),
-            owner=html.escape(project.delegasi_pemilik or "-", quote=True),
-            lokasi=lokasi_count,
-            dokumen=dokumen_count,
-            review=review_count,
-            id=project.id,
-        )
+        ).format(active_panel=active_panel, rows="".join(rows), record_total=record_total)
 
     # Dropdown proyek existing untuk melanjutkan step yang belum selesai.
     def _build_cover_wizard_resume_options(self, selected_project: Any) -> str:
@@ -496,25 +641,62 @@ class DataKapalWebsiteController(http.Controller):
             )
 
         if step == 2:
-            sign_checked = " checked" if form_data.get("sign_class") else ""
+            sign_enabled = bool(form_data.get("sign_class"))
+            sign_checked = " checked" if sign_enabled else ""
+            signature_wrap_style = "" if sign_enabled else ' style="display:none;"'
+            signature_filename = (form_data.get("sign_class_signature_filename") or "").strip()
+            signature_filename_block = ""
+            script_block = (
+                "<script>"
+                "(function(){"
+                "var checkbox=document.getElementById('sign_class_checkbox');"
+                "var wrapper=document.getElementById('sign_class_signature_wrap');"
+                "var input=document.getElementById('sign_class_signature');"
+                "if(!checkbox||!wrapper||!input){return;}"
+                "var sync=function(){"
+                "var enabled=checkbox.checked;"
+                "wrapper.style.display=enabled?'flex':'none';"
+                "input.required=enabled;"
+                "if(!enabled){input.value='';}"
+                "};"
+                "checkbox.addEventListener('change',sync);"
+                "sync();"
+                "})();"
+                "</script>"
+            )
+            if signature_filename:
+                signature_filename_block = (
+                    '<small class="wizard-inline-note">File dipilih sebelumnya: %s</small>'
+                    % html.escape(signature_filename, quote=True)
+                )
             return (
                 '<h2>Step 2: Lokasi &amp; Kelas Pengujian</h2>'
                 '<p class="wizard-help">Isi lokasi pengujian untuk project aktif.</p>'
-                '<form method="post" action="/tptr/cover-wizard/step2/save" class="wizard-form">'
+                '<form method="post" action="/tptr/cover-wizard/step2/save" enctype="multipart/form-data" class="wizard-form">'
                 '<input type="hidden" name="csrf_token" value="{csrf}" />'
                 '<input type="hidden" name="project_id" value="{project_id}" />'
                 '<div class="wizard-grid">'
                 '<label><span>Lokasi Pengujian</span><input type="text" name="lokasi_pengujian" required value="{lokasi}" /></label>'
-                '<label class="wizard-checkbox"><input type="checkbox" name="sign_class"{checked} /><span>Sign Class</span></label>'
+                '<label class="wizard-checkbox"><input id="sign_class_checkbox" type="checkbox" name="sign_class"{checked} /><span>Sign Class</span></label>'
+                '<label id="sign_class_signature_wrap" class="wizard-span-2"{signature_wrap_style}>'
+                '<span>Upload Tanda Tangan Class</span>'
+                '<input id="sign_class_signature" type="file" name="sign_class_signature" accept="image/*" />'
+                '<small class="wizard-inline-note">Upload file gambar tanda tangan Class (png/jpg/jpeg).</small>'
+                "{signature_filename_block}"
+                "</label>"
                 '<label class="wizard-span-2"><span>Catatan</span><textarea name="note" rows="4">{note}</textarea></label>'
                 "</div>"
                 '<div class="wizard-actions"><button type="submit" class="wizard-btn wizard-btn-primary">Simpan &amp; Lanjut Step 3</button></div>'
                 "</form>"
+                "{script_block}"
             ).format(
                 csrf=html.escape(csrf_token, quote=True),
                 project_id=project.id,
                 lokasi=html.escape(form_data.get("lokasi_pengujian") or "", quote=True),
                 checked=sign_checked,
+                signature_wrap_style=signature_wrap_style,
+                signature_filename_block=signature_filename_block,
+                script_block=script_block,
                 note=html.escape(form_data.get("note") or "", quote=True),
             )
 
@@ -614,7 +796,7 @@ class DataKapalWebsiteController(http.Controller):
                 warning_message=warning_message,
             ),
             "__STEP_TRACKER__": self._build_cover_wizard_stepper(step, project),
-            "__PROJECT_SUMMARY__": self._build_cover_wizard_project_summary(project),
+            "__PROJECT_SUMMARY__": self._build_cover_wizard_project_summary(project, step),
             "__RESUME_OPTIONS__": self._build_cover_wizard_resume_options(project),
             "__STEP_FORM__": self._build_cover_wizard_step_form(step, project, csrf_token, form_data=form_data),
             "__FINAL_ACTIONS__": self._build_cover_wizard_final_actions(step, status, project),
@@ -724,6 +906,161 @@ class DataKapalWebsiteController(http.Controller):
             "__CLASS_NAME__": html.escape(selected_preview["class_name"], quote=True),
             "__DRAWING_DOCUMENT_NAME__": html.escape(selected_preview["drawing_document_name"], quote=True),
             "__SCALE__": html.escape(selected_preview["scale"], quote=True),
+        }
+
+        rendered_html = template_html
+        for placeholder, value in replacements.items():
+            rendered_html = rendered_html.replace(placeholder, value)
+        return rendered_html
+
+    # Helper ini membaca template HTML statis untuk halaman review & persetujuan terpisah.
+    def _load_review_persetujuan_html_template(self) -> str:
+        template_path = get_module_resource(
+            "data_kapal",
+            "static",
+            "src",
+            "html",
+            "review_persetujuan_page.html",
+        )
+        if not template_path:
+            raise UserError("Template HTML Review & Persetujuan tidak ditemukan di modul data_kapal.")
+
+        try:
+            with open(template_path, "r", encoding="utf-8") as template_file:
+                return template_file.read()
+        except OSError as exc:
+            raise UserError("Gagal membaca template HTML Review & Persetujuan: %s" % exc)
+
+    # Ambil default isi form review dari data terakhir proyek agar user tidak mengisi dari nol.
+    def _get_review_form_defaults(self, project: Any) -> Dict[str, Any]:
+        defaults: Dict[str, Any] = {
+            "status_review_internal": "tidak",
+            "status_review_class_owner_delegate": "tidak",
+            "tanda_tangan_shipyard": False,
+            "tanda_tangan_class": False,
+            "tanda_tangan_owner_delegate": False,
+            "drawn_by_name": "",
+            "designed_by_name": "",
+            "checked_by_name": "",
+            "approved_by_name": "",
+            "tanggal_drawn_by": "",
+            "tanggal_designed_by": "",
+            "tanggal_checked_by": "",
+            "tanggal_approved_by": "",
+        }
+        if not project:
+            return defaults
+
+        latest_review = request.env["tptr.review_persetujuan"].search(
+            [("tp_id", "=", project.id)],
+            order="tanggal_input desc, id desc",
+            limit=1,
+        )
+        if not latest_review:
+            return defaults
+
+        defaults.update(
+            {
+                "status_review_internal": latest_review.status_review_internal or "tidak",
+                "status_review_class_owner_delegate": latest_review.status_review_class_owner_delegate or "tidak",
+                "tanda_tangan_shipyard": bool(latest_review.tanda_tangan_shipyard),
+                "tanda_tangan_class": bool(latest_review.tanda_tangan_class),
+                "tanda_tangan_owner_delegate": bool(latest_review.tanda_tangan_owner_delegate),
+                "drawn_by_name": latest_review.drawn_by_name or "",
+                "designed_by_name": latest_review.designed_by_name or "",
+                "checked_by_name": latest_review.checked_by_name or "",
+                "approved_by_name": latest_review.approved_by_name or "",
+                "tanggal_drawn_by": str(latest_review.tanggal_drawn_by or ""),
+                "tanggal_designed_by": str(latest_review.tanggal_designed_by or ""),
+                "tanggal_checked_by": str(latest_review.tanggal_checked_by or ""),
+                "tanggal_approved_by": str(latest_review.tanggal_approved_by or ""),
+            }
+        )
+        return defaults
+
+    # Banner status untuk feedback simpan review atau error validasi.
+    def _build_review_status_block(self, status: Optional[str], error_message: Optional[str] = None) -> str:
+        if error_message:
+            safe_message = html.escape(error_message, quote=True)
+            return '<div class="alert alert-danger">%s</div>' % safe_message
+
+        status_map = {
+            "saved": ("success", "Data review & persetujuan berhasil disimpan."),
+            "invalid_project": ("warning", "Project tidak valid atau belum dipilih."),
+            "preview_error": ("warning", "Preview gagal dimuat. Cek konfigurasi Jasper Server."),
+        }
+        css_name, message = status_map.get(status, (None, None))
+        if not css_name or not message:
+            return ""
+        return '<div class="alert alert-%s">%s</div>' % (css_name, message)
+
+    # Render halaman review terpisah: preview dokumen + form review yang tersimpan ke model review.
+    def _render_review_persetujuan_page(
+        self,
+        projects: Any,
+        selected_project: Any,
+        status: Optional[str] = None,
+        error_message: Optional[str] = None,
+        form_data: Optional[Mapping[str, Any]] = None,
+    ) -> str:
+        template_html = self._load_review_persetujuan_html_template()
+        status_block = self._build_review_status_block(status=status, error_message=error_message)
+        preview_data = self._get_jasper_preview_data(selected_project)
+
+        form_values = self._get_review_form_defaults(selected_project)
+        if form_data:
+            form_values.update(dict(form_data))
+
+        selected_status_internal = (form_values.get("status_review_internal") or "tidak").strip()
+        selected_status_class_owner = (form_values.get("status_review_class_owner_delegate") or "tidak").strip()
+
+        options = ['<option value="">Pilih proyek...</option>']
+        for project in projects:
+            option_label = "%s - %s" % (project.nomor_proyek or "-", project.nama_kapal or "Tanpa Nama")
+            selected_attr = ""
+            if selected_project and project.id == selected_project.id:
+                selected_attr = ' selected="selected"'
+            options.append(
+                '<option value="{id}"{selected}>{label}</option>'.format(
+                    id=project.id,
+                    selected=selected_attr,
+                    label=html.escape(option_label, quote=True),
+                )
+            )
+
+        project_id_value = str(selected_project.id) if selected_project else ""
+        preview_url = (
+            "/tptr/review-persetujuan/preview?project_id=%s" % selected_project.id
+            if selected_project
+            else ""
+        )
+
+        replacements = {
+            "__STATUS_BLOCK__": status_block,
+            "__CSRF_TOKEN__": request.csrf_token(),
+            "__PROJECT_OPTIONS__": "\n".join(options),
+            "__PROJECT_ID__": html.escape(project_id_value, quote=True),
+            "__PREVIEW_URL__": html.escape(preview_url, quote=True),
+            "__PROJECT_NAME__": html.escape(preview_data["project_name"], quote=True),
+            "__PROJECT_NO__": html.escape(preview_data["project_no"], quote=True),
+            "__OWNER__": html.escape(preview_data["owner"], quote=True),
+            "__CLASS_NAME__": html.escape(preview_data["class_name"], quote=True),
+            "__DRAWING_DOCUMENT_NAME__": html.escape(preview_data["drawing_document_name"], quote=True),
+            "__RI_YA_SELECTED__": ' selected="selected"' if selected_status_internal == "ya" else "",
+            "__RI_TIDAK_SELECTED__": ' selected="selected"' if selected_status_internal != "ya" else "",
+            "__RO_YA_SELECTED__": ' selected="selected"' if selected_status_class_owner == "ya" else "",
+            "__RO_TIDAK_SELECTED__": ' selected="selected"' if selected_status_class_owner != "ya" else "",
+            "__TTD_SHIPYARD_CHECKED__": ' checked="checked"' if form_values.get("tanda_tangan_shipyard") else "",
+            "__TTD_CLASS_CHECKED__": ' checked="checked"' if form_values.get("tanda_tangan_class") else "",
+            "__TTD_OWNER_CHECKED__": ' checked="checked"' if form_values.get("tanda_tangan_owner_delegate") else "",
+            "__DRAWN_BY_NAME__": html.escape(form_values.get("drawn_by_name") or "", quote=True),
+            "__DESIGNED_BY_NAME__": html.escape(form_values.get("designed_by_name") or "", quote=True),
+            "__CHECKED_BY_NAME__": html.escape(form_values.get("checked_by_name") or "", quote=True),
+            "__APPROVED_BY_NAME__": html.escape(form_values.get("approved_by_name") or "", quote=True),
+            "__TANGGAL_DRAWN_BY__": html.escape(form_values.get("tanggal_drawn_by") or "", quote=True),
+            "__TANGGAL_DESIGNED_BY__": html.escape(form_values.get("tanggal_designed_by") or "", quote=True),
+            "__TANGGAL_CHECKED_BY__": html.escape(form_values.get("tanggal_checked_by") or "", quote=True),
+            "__TANGGAL_APPROVED_BY__": html.escape(form_values.get("tanggal_approved_by") or "", quote=True),
         }
 
         rendered_html = template_html
@@ -866,6 +1203,12 @@ class DataKapalWebsiteController(http.Controller):
         lokasi_pengujian = (post.get("lokasi_pengujian") or "").strip()
         note = (post.get("note") or "").strip()
         sign_class = bool(post.get("sign_class"))
+        sign_signature_file = request.httprequest.files.get("sign_class_signature")
+        sign_signature_bytes = b""
+        sign_signature_filename = ""
+        if sign_signature_file and sign_signature_file.filename:
+            sign_signature_filename = (sign_signature_file.filename or "").strip()
+            sign_signature_bytes = sign_signature_file.read() or b""
 
         if not lokasi_pengujian:
             page_html = self._render_cover_wizard_page(
@@ -876,6 +1219,7 @@ class DataKapalWebsiteController(http.Controller):
                     "lokasi_pengujian": lokasi_pengujian,
                     "note": note,
                     "sign_class": sign_class,
+                    "sign_class_signature_filename": sign_signature_filename,
                 },
             )
             return request.make_response(
@@ -883,14 +1227,39 @@ class DataKapalWebsiteController(http.Controller):
                 headers=[("Content-Type", "text/html; charset=utf-8")],
             )
 
-        request.env["tptr.lokasi_kelas"].create(
-            {
-                "kapal_id": project.id,
-                "lokasi_pengujian": lokasi_pengujian,
-                "sign_class": sign_class,
-                "note": note,
-            }
-        )
+        # Jika Sign Class dicentang, upload tanda tangan menjadi wajib.
+        if sign_class and not sign_signature_bytes:
+            page_html = self._render_cover_wizard_page(
+                step=2,
+                project=project,
+                error_message="Upload tanda tangan Class wajib saat Sign Class dicentang.",
+                form_data={
+                    "lokasi_pengujian": lokasi_pengujian,
+                    "note": note,
+                    "sign_class": sign_class,
+                    "sign_class_signature_filename": sign_signature_filename,
+                },
+            )
+            return request.make_response(
+                page_html,
+                headers=[("Content-Type", "text/html; charset=utf-8")],
+            )
+
+        lokasi_vals = {
+            "kapal_id": project.id,
+            "lokasi_pengujian": lokasi_pengujian,
+            "sign_class": sign_class,
+            "note": note,
+        }
+        if sign_class and sign_signature_bytes:
+            lokasi_vals.update(
+                {
+                    "sign_class_signature": base64.b64encode(sign_signature_bytes),
+                    "sign_class_signature_filename": sign_signature_filename or "sign_class_signature.png",
+                }
+            )
+
+        request.env["tptr.lokasi_kelas"].create(lokasi_vals)
         return request.redirect("/tptr/cover-wizard?step=3&project_id=%s&status=step2_saved" % project.id)
 
     # Simpan Step 3 (Dokumen Pendukung), lalu redirect ke Step 4.
@@ -1045,3 +1414,134 @@ class DataKapalWebsiteController(http.Controller):
                 ("Content-Disposition", content_disposition(filename)),
             ],
         )
+
+    # Halaman review terpisah untuk meninjau dokumen + mengisi form review/persetujuan.
+    @http.route("/tptr/review-persetujuan", type="http", auth="user", website=True, methods=["GET"])
+    def review_persetujuan_page(self, **kwargs):
+        projects = request.env["pal.kapal.proyek"].search([], order="id desc")
+
+        selected_project = None
+        selected_id = (kwargs.get("project_id") or "").strip()
+        if selected_id.isdigit():
+            selected_project = request.env["pal.kapal.proyek"].browse(int(selected_id)).exists()
+        if not selected_project and projects:
+            selected_project = projects[0]
+
+        status = kwargs.get("status")
+        error_message = kwargs.get("error")
+        page_html = self._render_review_persetujuan_page(
+            projects=projects,
+            selected_project=selected_project,
+            status=status,
+            error_message=error_message,
+        )
+        return request.make_response(
+            page_html,
+            headers=[("Content-Type", "text/html; charset=utf-8")],
+        )
+
+    # Endpoint preview PDF inline untuk iframe pada halaman review.
+    @http.route("/tptr/review-persetujuan/preview", type="http", auth="user", website=True, methods=["GET"])
+    def review_persetujuan_preview(self, **kwargs):
+        project_id_raw = (kwargs.get("project_id") or "").strip()
+        if not project_id_raw.isdigit():
+            return request.make_response(
+                "Project tidak valid untuk preview.",
+                headers=[("Content-Type", "text/plain; charset=utf-8")],
+                status=400,
+            )
+
+        project = request.env["pal.kapal.proyek"].browse(int(project_id_raw)).exists()
+        if not project:
+            return request.make_response(
+                "Project tidak ditemukan.",
+                headers=[("Content-Type", "text/plain; charset=utf-8")],
+                status=404,
+            )
+
+        try:
+            report_service = request.env.get("tptr.report")
+            if report_service:
+                pdf_content = report_service.generate_cover_sheet_pdf_by_id(project.id)
+            else:
+                pdf_content = project._get_jasper_cover_sheet_pdf()
+        except Exception as exc:
+            return request.make_response(
+                "Preview gagal dibuat: %s" % exc,
+                headers=[("Content-Type", "text/plain; charset=utf-8")],
+                status=500,
+            )
+
+        filename = "Cover Sheet Preview - %s.pdf" % (project.nomor_proyek or project.id)
+        return request.make_response(
+            pdf_content,
+            headers=[
+                ("Content-Type", "application/pdf"),
+                ("Content-Length", str(len(pdf_content))),
+                ('Content-Disposition', 'inline; filename="%s"' % filename.replace('"', "")),
+            ],
+        )
+
+    # Simpan hasil review/persetujuan dari halaman terpisah.
+    @http.route("/tptr/review-persetujuan/save", type="http", auth="user", website=True, methods=["POST"], csrf=True)
+    def review_persetujuan_save(self, **post):
+        project_id_raw = (post.get("project_id") or "").strip()
+        if not project_id_raw.isdigit():
+            return request.redirect("/tptr/review-persetujuan?status=invalid_project")
+
+        project = request.env["pal.kapal.proyek"].browse(int(project_id_raw)).exists()
+        if not project:
+            return request.redirect("/tptr/review-persetujuan?status=invalid_project")
+
+        status_review_internal = (post.get("status_review_internal") or "").strip()
+        status_review_class_owner_delegate = (post.get("status_review_class_owner_delegate") or "").strip()
+        allowed_status = {"ya", "tidak"}
+
+        form_data = {
+            "status_review_internal": status_review_internal or "tidak",
+            "status_review_class_owner_delegate": status_review_class_owner_delegate or "tidak",
+            "tanda_tangan_shipyard": bool(post.get("tanda_tangan_shipyard")),
+            "tanda_tangan_class": bool(post.get("tanda_tangan_class")),
+            "tanda_tangan_owner_delegate": bool(post.get("tanda_tangan_owner_delegate")),
+            "drawn_by_name": (post.get("drawn_by_name") or "").strip(),
+            "designed_by_name": (post.get("designed_by_name") or "").strip(),
+            "checked_by_name": (post.get("checked_by_name") or "").strip(),
+            "approved_by_name": (post.get("approved_by_name") or "").strip(),
+            "tanggal_drawn_by": (post.get("tanggal_drawn_by") or "").strip(),
+            "tanggal_designed_by": (post.get("tanggal_designed_by") or "").strip(),
+            "tanggal_checked_by": (post.get("tanggal_checked_by") or "").strip(),
+            "tanggal_approved_by": (post.get("tanggal_approved_by") or "").strip(),
+        }
+
+        if status_review_internal not in allowed_status or status_review_class_owner_delegate not in allowed_status:
+            projects = request.env["pal.kapal.proyek"].search([], order="id desc")
+            page_html = self._render_review_persetujuan_page(
+                projects=projects,
+                selected_project=project,
+                error_message="Status review harus dipilih Ya/Tidak.",
+                form_data=form_data,
+            )
+            return request.make_response(
+                page_html,
+                headers=[("Content-Type", "text/html; charset=utf-8")],
+            )
+
+        request.env["tptr.review_persetujuan"].create(
+            {
+                "tp_id": project.id,
+                "status_review_internal": form_data["status_review_internal"],
+                "status_review_class_owner_delegate": form_data["status_review_class_owner_delegate"],
+                "tanda_tangan_shipyard": form_data["tanda_tangan_shipyard"],
+                "tanda_tangan_class": form_data["tanda_tangan_class"],
+                "tanda_tangan_owner_delegate": form_data["tanda_tangan_owner_delegate"],
+                "drawn_by_name": form_data["drawn_by_name"],
+                "designed_by_name": form_data["designed_by_name"],
+                "checked_by_name": form_data["checked_by_name"],
+                "approved_by_name": form_data["approved_by_name"],
+                "tanggal_drawn_by": form_data["tanggal_drawn_by"] or False,
+                "tanggal_designed_by": form_data["tanggal_designed_by"] or False,
+                "tanggal_checked_by": form_data["tanggal_checked_by"] or False,
+                "tanggal_approved_by": form_data["tanggal_approved_by"] or False,
+            }
+        )
+        return request.redirect("/tptr/review-persetujuan?project_id=%s&status=saved" % project.id)

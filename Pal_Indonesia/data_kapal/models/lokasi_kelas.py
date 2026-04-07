@@ -42,6 +42,15 @@ class TptrLokasiKelas(models.Model):
     # Penanda apakah sudah ada sign class pada lokasi pengujian ini.
     sign_class = fields.Boolean(string="Sign Class", default=False)
 
+    # File tanda tangan class (scan/image) yang diunggah saat Sign Class dicentang.
+    sign_class_signature = fields.Binary(
+        string="File Tanda Tangan Class",
+        attachment=True,
+    )
+
+    # Nama file tanda tangan agar mudah diidentifikasi oleh user.
+    sign_class_signature_filename = fields.Char(string="Nama File Tanda Tangan Class")
+
     # Tanggal input otomatis disimpan saat record dibuat.
     tanggal_input = fields.Datetime(
         string="Tanggal Input",

@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- View utama TPTR untuk menampilkan ringkasan dokumen dan status persetujuan per proyek. -->
+    <record id="view_pal_kapal_proyek_tptr_main_list" model="ir.ui.view">
+        <field name="name">pal.kapal.proyek.tptr.main.list</field>
+        <field name="model">pal.kapal.proyek</field>
+        <field name="arch" type="xml">
+            <list string="TPTR">
+                <field name="nomor_dokumen_utama"/>
+                <field name="nama_dokumen_utama"/>
+                <field name="nama_kapal" string="Nama Project"/>
+                <field name="tanggal_dibuat_document"/>
+                <field name="terakhir_diedit_document"/>
+                <field name="status_tptr"/>
+            </list>
+        </field>
+    </record>
+
     <!-- View list ini dipakai untuk melihat ringkasan semua data kapal/proyek sekaligus. -->
     <record id="view_pal_kapal_proyek_list" model="ir.ui.view">
         <field name="name">pal.kapal.proyek.list</field>
@@ -42,6 +58,7 @@
                                     <field name="jenis_tes" readonly="1"/>
                                     <field name="kelas_pengujian" readonly="1"/>
                                     <field name="sign_class"/>
+                                    <field name="sign_class_signature_filename" string="File TTD Class"/>
                                     <field name="tanggal_input" readonly="1"/>
                                 </list>
                                 <form string="Lokasi &amp; Kelas Pengujian">
@@ -52,6 +69,8 @@
                                             <field name="jenis_tes" readonly="1"/>
                                             <field name="kelas_pengujian" readonly="1"/>
                                             <field name="sign_class"/>
+                                            <field name="sign_class_signature_filename" readonly="1" invisible="not sign_class"/>
+                                            <field name="sign_class_signature" widget="image" readonly="1" invisible="not sign_class"/>
                                             <field name="tanggal_input" readonly="1"/>
                                             <field name="note"/>
                                         </group>
@@ -96,6 +115,22 @@
             </p>
             <p>
                 Data ini menjadi referensi utama yang akan digunakan di hampir seluruh proses TPTR.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action ini jadi landing utama TPTR dengan fokus ke nomor dokumen, nama dokumen, project, dan status. -->
+    <record id="action_tptr_utama" model="ir.actions.act_window">
+        <field name="name">TPTR</field>
+        <field name="res_model">pal.kapal.proyek</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_pal_kapal_proyek_tptr_main_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tambahkan data TPTR pertama Anda.
+            </p>
+            <p>
+                Halaman ini menampilkan ringkasan nomor dokumen, nama dokumen, nama project, dan status persetujuan.
             </p>
         </field>
     </record>
@@ -153,6 +188,7 @@
                 <field name="kapal_id"/>
                 <field name="lokasi_pengujian"/>
                 <field name="sign_class"/>
+                <field name="sign_class_signature_filename" string="File TTD Class"/>
                 <field name="tanggal_input"/>
             </list>
         </field>
@@ -170,6 +206,8 @@
                         <field name="jenis_tes" readonly="1"/>
                         <field name="kelas_pengujian" readonly="1"/>
                         <field name="sign_class"/>
+                        <field name="sign_class_signature_filename" readonly="1" invisible="not sign_class"/>
+                        <field name="sign_class_signature" widget="image" readonly="1" invisible="not sign_class"/>
                         <field name="tanggal_input" readonly="1"/>
                         <field name="note"/>
                     </group>
@@ -200,6 +238,13 @@
 
     <!-- Menu root dan submenu agar user bisa mengakses form CRUD dari navigasi backend Odoo. -->
     <menuitem id="menu_pal_kapal_root" name="TPTR" sequence="10"/>
+    <menuitem
+        id="menu_tptr_utama"
+        name="TPTR"
+        parent="menu_pal_kapal_root"
+        action="action_tptr_utama"
+        sequence="5"
+    />
     <menuitem
         id="menu_pal_kapal_proyek"
         name="Data Kapal &amp; Proyek"

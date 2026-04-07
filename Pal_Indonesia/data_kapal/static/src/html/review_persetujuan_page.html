@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TPTR Review &amp; Persetujuan</title>
+    <link rel="stylesheet" href="/data_kapal/static/src/css/review_persetujuan_page.css" />
+</head>
+<body>
+    <main class="review-page">
+        <section class="review-shell">
+            <header class="review-header">
+                <div>
+                    <h1>TPTR Review &amp; Persetujuan</h1>
+                    <p>Halaman terpisah untuk preview dokumen dan input hasil review.</p>
+                </div>
+                <div class="review-shortcuts">
+                    <a class="btn-soft" href="/tptr/cover-wizard?step=4">Kembali ke Step 4</a>
+                    <a class="btn-soft" href="/tptr/jasper-cover">Halaman Jasper</a>
+                </div>
+            </header>
+
+            __STATUS_BLOCK__
+
+            <section class="review-project-picker">
+                <form action="/tptr/review-persetujuan" method="get">
+                    <label for="project_id">Data Kapal &amp; Proyek</label>
+                    <div class="picker-row">
+                        <select id="project_id" name="project_id" required>
+                            __PROJECT_OPTIONS__
+                        </select>
+                        <button type="submit" class="btn-primary">Muat Project</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="review-meta">
+                <article><span>Project Name</span><strong>__PROJECT_NAME__</strong></article>
+                <article><span>Project No.</span><strong>__PROJECT_NO__</strong></article>
+                <article><span>Owner</span><strong>__OWNER__</strong></article>
+                <article><span>Class</span><strong>__CLASS_NAME__</strong></article>
+                <article class="wide"><span>Drawing/Document Name</span><strong>__DRAWING_DOCUMENT_NAME__</strong></article>
+            </section>
+
+            <section class="review-layout">
+                <article class="preview-card">
+                    <h2>Preview Dokumen</h2>
+                    <p>Preview PDF cover dari JasperReports untuk project yang dipilih.</p>
+                    <iframe title="Preview Dokumen TPTR" src="__PREVIEW_URL__"></iframe>
+                </article>
+
+                <article class="form-card">
+                    <h2>Form Review</h2>
+                    <form action="/tptr/review-persetujuan/save" method="post" class="review-form">
+                        <input type="hidden" name="csrf_token" value="__CSRF_TOKEN__" />
+                        <input type="hidden" name="project_id" value="__PROJECT_ID__" />
+
+                        <div class="grid-2">
+                            <label>
+                                <span>Status Review Internal</span>
+                                <select name="status_review_internal">
+                                    <option value="ya"__RI_YA_SELECTED__>Ya</option>
+                                    <option value="tidak"__RI_TIDAK_SELECTED__>Tidak</option>
+                                </select>
+                            </label>
+                            <label>
+                                <span>Status Review Class/Owner Delegate</span>
+                                <select name="status_review_class_owner_delegate">
+                                    <option value="ya"__RO_YA_SELECTED__>Ya</option>
+                                    <option value="tidak"__RO_TIDAK_SELECTED__>Tidak</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="check-row">
+                            <label><input type="checkbox" name="tanda_tangan_shipyard"__TTD_SHIPYARD_CHECKED__ /> Tanda Tangan Shipyard</label>
+                            <label><input type="checkbox" name="tanda_tangan_class"__TTD_CLASS_CHECKED__ /> Tanda Tangan Class</label>
+                            <label><input type="checkbox" name="tanda_tangan_owner_delegate"__TTD_OWNER_CHECKED__ /> Tanda Tangan Owner Delegate</label>
+                        </div>
+
+                        <div class="grid-2">
+                            <label>
+                                <span>Drawn By</span>
+                                <input type="text" name="drawn_by_name" value="__DRAWN_BY_NAME__" />
+                            </label>
+                            <label>
+                                <span>Tanggal Drawn By</span>
+                                <input type="date" name="tanggal_drawn_by" value="__TANGGAL_DRAWN_BY__" />
+                            </label>
+                            <label>
+                                <span>Designed By</span>
+                                <input type="text" name="designed_by_name" value="__DESIGNED_BY_NAME__" />
+                            </label>
+                            <label>
+                                <span>Tanggal Designed By</span>
+                                <input type="date" name="tanggal_designed_by" value="__TANGGAL_DESIGNED_BY__" />
+                            </label>
+                            <label>
+                                <span>Checked By</span>
+                                <input type="text" name="checked_by_name" value="__CHECKED_BY_NAME__" />
+                            </label>
+                            <label>
+                                <span>Tanggal Checked By</span>
+                                <input type="date" name="tanggal_checked_by" value="__TANGGAL_CHECKED_BY__" />
+                            </label>
+                            <label>
+                                <span>Approved By</span>
+                                <input type="text" name="approved_by_name" value="__APPROVED_BY_NAME__" />
+                            </label>
+                            <label>
+                                <span>Tanggal Approved By</span>
+                                <input type="date" name="tanggal_approved_by" value="__TANGGAL_APPROVED_BY__" />
+                            </label>
+                        </div>
+
+                        <div class="actions">
+                            <button type="submit" class="btn-primary">Simpan Review</button>
+                            <a class="btn-soft" href="/web#action=data_kapal.action_tptr_review_persetujuan">Buka List Review Backend</a>
+                        </div>
+                    </form>
+                </article>
+            </section>
+        </section>
+    </main>
+</body>
+</html>

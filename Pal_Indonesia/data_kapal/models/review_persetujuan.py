@@ -45,6 +45,18 @@ class TptrReviewPersetujuan(models.Model):
     tanda_tangan_class = fields.Boolean(string="Tanda Tangan Class", default=False)
     tanda_tangan_owner_delegate = fields.Boolean(string="Tanda Tangan Owner Delegate", default=False)
 
+    # Identitas personel per peran pada area approval cover sheet.
+    drawn_by_name = fields.Char(string="Nama Drawn By")
+    designed_by_name = fields.Char(string="Nama Designed By")
+    checked_by_name = fields.Char(string="Nama Checked By")
+    approved_by_name = fields.Char(string="Nama Approved By")
+
+    # Tanggal persetujuan per baris pada cover sheet halaman 1.
+    tanggal_drawn_by = fields.Date(string="Tanggal Drawn By")
+    tanggal_designed_by = fields.Date(string="Tanggal Designed By")
+    tanggal_checked_by = fields.Date(string="Tanggal Checked By")
+    tanggal_approved_by = fields.Date(string="Tanggal Approved By")
+
     # Tanggal input otomatis saat data dibuat.
     tanggal_input = fields.Datetime(
         string="Tanggal Input",
