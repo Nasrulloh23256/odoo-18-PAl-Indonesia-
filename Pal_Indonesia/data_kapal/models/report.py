@@ -10,7 +10,7 @@ class TPTRReportService(models.AbstractModel):
     # Controller memanggil method ini untuk menghasilkan PDF cover sheet dari Jasper Server eksternal.
     def generate_cover_sheet_pdf(self, project):
         project.ensure_one()
-        return project._get_jasper_cover_sheet_pdf()
+        return project._get_jasper_combined_pdf()
 
     # Helper ini menerima project_id dari controller agar validasi record bisa dipusatkan di service layer.
     def generate_cover_sheet_pdf_by_id(self, project_id):

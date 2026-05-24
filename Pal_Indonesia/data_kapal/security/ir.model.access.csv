@@ -4,3 +4,7 @@ access_pal_kapal_kelas_user,access.pal.kapal.kelas.user,model_pal_kapal_kelas,ba
 access_tptr_lokasi_kelas_user,access.tptr.lokasi.kelas.user,model_tptr_lokasi_kelas,base.group_user,1,1,1,1
 access_tptr_dokumen_pendukung_user,access.tptr.dokumen.pendukung.user,model_tptr_dokumen_pendukung,base.group_user,1,1,1,1
 access_tptr_review_persetujuan_user,access.tptr.review.persetujuan.user,model_tptr_review_persetujuan,base.group_user,1,1,1,1
+access_tptr_peralatan_user,access.tptr.peralatan.user,model_tptr_peralatan,base.group_user,1,1,1,1
+access_tptr_catatan_user,access.tptr.catatan.user,model_tptr_catatan,base.group_user,1,1,1,1
+
+

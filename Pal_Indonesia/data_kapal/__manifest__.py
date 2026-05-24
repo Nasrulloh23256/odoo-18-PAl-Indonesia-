@@ -17,6 +17,7 @@
         'views/dokumen_pendukung_views.xml',  # View & menu fitur dokumen pendukung TPTR.
         'views/review_persetujuan_views.xml',  # View & menu fitur review/persetujuan TPTR.
         'views/tptr_cover_sheet.xml',  # QWeb template + action report PDF cover sheet TPTR.
+        'views/tptr_body_sheet.xml',  # QWeb template fallback untuk body TPTR saat Jasper body tidak tersedia.
         'views/templates.xml',  # Template website untuk CRUD via web form.
         # JRXML tidak dimuat lewat manifest data; file dipakai Jasper Server eksternal.
         # report/report_templates.xml juga tidak dimuat karena alur download PDF memakai REST Jasper.

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TPTR Cover Wizard</title>
     <link rel="stylesheet" href="/data_kapal/static/src/css/tptr_cover_wizard.css" />
 </head>
+
 <body>
     <main class="wizard-page">
         <section class="wizard-shell">
@@ -14,44 +16,33 @@
                     <img class="wizard-logo" src="/data_kapal/static/src/img/pal_logo.svg" alt="PT PAL Indonesia" />
                     <div class="wizard-brand-copy">
                         <p class="wizard-badge">TPTR PUSAT</p>
-                        <h1>Wizard Cover TPTR</h1>
+                        <h1>Hub dan Wizard Cover TPTR</h1>
                         <p class="wizard-subtitle">
-                            Lengkapi workflow TPTR dari Step 1 sampai Step 4 dengan tampilan yang selaras dengan halaman TPTR backend.
+                            Halaman ini dipakai untuk membuat project cover baru, melanjutkan pengisian Step 1 sampai
+                            Step 8, lalu menyiapkan data cover dan body sebelum masuk ke Jasper.
                         </p>
+                        <div class="wizard-header-pills">
+                            <span class="wizard-header-pill">Hub Project</span>
+                            <span class="wizard-header-pill">Wizard 9 Step</span>
+                            <span class="wizard-header-pill">Final ke Jasper</span>
+                        </div>
                     </div>
                 </div>
                 <div class="wizard-shortcuts">
+                    <a class="wizard-btn wizard-btn-primary" href="/tptr/cover-wizard">Hub Project</a>
                     <a class="wizard-btn wizard-btn-soft" href="/tptr/jasper-cover">Halaman Jasper</a>
                     <a class="wizard-btn wizard-btn-soft" href="/tptr/review-persetujuan">Halaman Review</a>
-                    <a class="wizard-btn wizard-btn-soft" href="/web#action=data_kapal.action_pal_kapal_proyek">Backend Odoo</a>
+                    <a class="wizard-btn wizard-btn-soft" href="/web#action=data_kapal.action_pal_kapal_proyek">Backend
+                        Odoo</a>
                 </div>
             </header>
 
             __STATUS_BLOCK__
+            __PAGE_INTRO__
 
-            <section class="wizard-resume">
-                <h2>Lanjutkan Project Existing</h2>
-                <form action="/tptr/cover-wizard" method="get" class="wizard-resume-form">
-                    <input type="hidden" name="step" value="__STEP_VALUE__" />
-                    <select name="project_id">
-                        __RESUME_OPTIONS__
-                    </select>
-                    <button type="submit" class="wizard-btn wizard-btn-soft">Muat Progress</button>
-                </form>
-            </section>
-
-            <section class="wizard-stepper-wrap">
-                __STEP_TRACKER__
-            </section>
-
-            __PROJECT_SUMMARY__
-
-            <section class="wizard-form-card">
-                __STEP_FORM__
-            </section>
-
-            __FINAL_ACTIONS__
+            __MAIN_CONTENT__
         </section>
     </main>
 </body>
+
 </html>

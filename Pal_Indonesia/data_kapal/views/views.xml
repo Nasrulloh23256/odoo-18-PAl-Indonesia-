@@ -9,6 +9,7 @@
                 <field name="nomor_dokumen_utama"/>
                 <field name="nama_dokumen_utama"/>
                 <field name="nama_kapal" string="Nama Project"/>
+                <field name="template_tptr"/>
                 <field name="tanggal_dibuat_document"/>
                 <field name="terakhir_diedit_document"/>
                 <field name="status_tptr"/>
@@ -26,6 +27,7 @@
                 <field name="nomor_proyek"/>
                 <field name="kelas_kapal_id"/>
                 <field name="delegasi_pemilik"/>
+                <field name="template_tptr"/>
                 <field name="jenis_tes"/>
                 <field name="tanggal_input"/>
             </list>
@@ -45,6 +47,7 @@
                         <field name="kelas_kapal_id"/>
                         <field name="kelas_kapal" readonly="1"/>
                         <field name="delegasi_pemilik"/>
+                        <field name="template_tptr"/>
                         <field name="jenis_tes"/>
                         <field name="project_symbol" widget="image" class="oe_avatar"/>
                         <field name="tanggal_input" readonly="1"/>
@@ -78,6 +81,31 @@
                                 </form>
                             </field>
                         </page>
+                        <page string="Body TPTR">
+                            <group string="Halaman 5 Body TPTR">
+                                <field name="body_test_related_project_no"/>
+                                <field name="body_contract_specification"/>
+                            </group>
+                            <group string="Halaman 6 Body TPTR">
+                                <field name="body_supporting_reference"/>
+                                <field name="body_condition"/>
+                                <field name="body_time"/>
+                            </group>
+                            <group string="Acceptance Signature">
+                                <group>
+                                    <field name="body_delegate_name"/>
+                                    <field name="body_delegate_signature_filename" readonly="1"/>
+                                    <field name="body_delegate_signature_date" readonly="1"/>
+                                    <field name="body_delegate_signature" widget="image"/>
+                                </group>
+                                <group>
+                                    <field name="body_pt_pal_name"/>
+                                    <field name="body_pt_pal_signature_filename" readonly="1"/>
+                                    <field name="body_pt_pal_signature_date" readonly="1"/>
+                                    <field name="body_pt_pal_signature" widget="image"/>
+                                </group>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
             </form>
@@ -94,10 +122,12 @@
                 <field name="nomor_proyek"/>
                 <field name="kelas_kapal_id"/>
                 <field name="delegasi_pemilik"/>
+                <field name="template_tptr"/>
                 <filter string="Jenis Tes HAT" name="filter_jenis_hat" domain="[('jenis_tes', '=', 'hat')]"/>
                 <filter string="Jenis Tes SAT" name="filter_jenis_sat" domain="[('jenis_tes', '=', 'sat')]"/>
                 <group expand="0" string="Group By">
                     <filter string="Kelas Kapal" name="group_kelas_kapal" context="{'group_by': 'kelas_kapal_id'}"/>
+                    <filter string="Template" name="group_template_tptr" context="{'group_by': 'template_tptr'}"/>
                     <filter string="Jenis Tes" name="group_jenis_tes" context="{'group_by': 'jenis_tes'}"/>
                 </group>
             </search>

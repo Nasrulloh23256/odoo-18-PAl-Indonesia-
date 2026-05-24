@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="tptr_test_record_intro_report"
+    pageWidth="595"
+    pageHeight="842"
+    columnWidth="595"
+    leftMargin="0"
+    rightMargin="0"
+    topMargin="0"
+    bottomMargin="0"
+    whenNoDataType="AllSectionsNoDetail">
+
+    <parameter name="ProjectName" class="java.lang.String"/>
+    <parameter name="project_name" class="java.lang.String"/>
+    <parameter name="summary_footer_label" class="java.lang.String"/>
+    <parameter name="test_record_intro_title" class="java.lang.String"/>
+    <parameter name="test_record_intro_object_label" class="java.lang.String"/>
+    <parameter name="test_record_project_number_label" class="java.lang.String"/>
+    <parameter name="test_record_document_number" class="java.lang.String"/>
+    <parameter name="test_record_page_number_label" class="java.lang.String"/>
+
+    <title>
+        <band height="842">
+            <rectangle>
+                <reportElement x="5" y="5" width="585" height="832"/>
+            </rectangle>
+
+            <staticText>
+                <reportElement x="58" y="54" width="120" height="22"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="7" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DIVISION OF QA
+TEST RECORD]]></text>
+            </staticText>
+
+            <textField isBlankWhenNull="true">
+                <reportElement x="385" y="60" width="135" height="12"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font fontName="Arial" size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[
+                    ($P{ProjectName} != null && $P{ProjectName}.trim().length() > 0)
+                    ? $P{ProjectName}
+                    : (($P{project_name} != null && $P{project_name}.trim().length() > 0) ? $P{project_name} : "-")
+                ]]></textFieldExpression>
+            </textField>
+
+            <line>
+                <reportElement x="58" y="84" width="470" height="0"/>
+            </line>
+
+            <textField isBlankWhenNull="true">
+                <reportElement x="110" y="174" width="374" height="24"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Arial" size="18" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[
+                    ($P{test_record_intro_title} != null && $P{test_record_intro_title}.trim().length() > 0)
+                    ? $P{test_record_intro_title}
+                    : "Sea Acceptance Test"
+                ]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="110" y="236" width="374" height="24"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Arial" size="17" isBold="true"/>
+                </textElement>
+                <text><![CDATA[TEST RECORD:]]></text>
+            </staticText>
+
+            <textField isBlankWhenNull="true" isStretchWithOverflow="true">
+                <reportElement x="110" y="266" width="374" height="56"/>
+                <textElement textAlignment="Center" verticalAlignment="Top">
+                    <font fontName="Arial" size="17"/>
+                    <paragraph lineSpacing="Single"/>
+                </textElement>
+                <textFieldExpression><![CDATA[
+                    ($P{test_record_intro_object_label} != null && $P{test_record_intro_object_label}.trim().length() > 0)
+                    ? $P{test_record_intro_object_label}
+                    : "RIGID HULL INFLATABLE BOAT (RHIB)"
+                ]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="62" y="495" width="165" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[PROYEK/NOMOR PROYEK]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="62" y="509" width="165" height="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="8" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[(Project/Project number)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="234" y="495" width="8" height="14"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Arial" size="10"/>
+                </textElement>
+                <text><![CDATA[:]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="248" y="495" width="270" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[
+                    ($P{test_record_project_number_label} != null && $P{test_record_project_number_label}.trim().length() > 0)
+                    ? $P{test_record_project_number_label}
+                    : "-"
+                ]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="62" y="532" width="165" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[NOMOR DOKUMEN]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="62" y="546" width="165" height="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="8" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[(Document number)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="234" y="532" width="8" height="14"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font fontName="Arial" size="10"/>
+                </textElement>
+                <text><![CDATA[:]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="248" y="532" width="270" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[
+                    ($P{test_record_document_number} != null && $P{test_record_document_number}.trim().length() > 0)
+                    ? $P{test_record_document_number}
+                    : "-"
+                ]]></textFieldExpression>
+            </textField>
+
+            <line>
+                <reportElement x="62" y="767" width="470" height="0"/>
+            </line>
+            <textField isBlankWhenNull="true">
+                <reportElement x="64" y="772" width="360" height="12"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Arial" size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[
+                    ($P{summary_footer_label} != null && $P{summary_footer_label}.trim().length() > 0)
+                    ? $P{summary_footer_label}
+                    : "-"
+                ]]></textFieldExpression>
+            </textField>
+            <textField isBlankWhenNull="true">
+                <reportElement x="480" y="772" width="52" height="12"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font fontName="Arial" size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[
+                    ($P{test_record_page_number_label} != null && $P{test_record_page_number_label}.trim().length() > 0)
+                    ? $P{test_record_page_number_label}
+                    : "7 / 12"
+                ]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+</jasperReport>

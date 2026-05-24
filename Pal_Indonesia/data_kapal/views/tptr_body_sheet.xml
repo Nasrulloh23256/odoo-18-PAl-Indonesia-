@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_report_tptr_body_sheet" model="ir.actions.report">
+            <field name="name">TPTR Body Sheet</field>
+            <field name="model">pal.kapal.proyek</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">data_kapal.tptr_body_sheet</field>
+            <field name="report_file">data_kapal.tptr_body_sheet</field>
+            <field name="paperformat_id" ref="data_kapal.paperformat_tptr_cover_sheet"/>
+            <field name="print_report_name">'TPTR_Body_' + (object.nomor_proyek or object.nama_kapal or 'TPTR')</field>
+        </record>
+
+        <template id="tptr_body_sheet" name="tptr.body_sheet">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="body" t-value="doc._get_body_sheet_data()"/>
+                    <t t-call="web.basic_layout">
+                        <div class="page tptr-body-page">
+                            <style>
+                                .tptr-body-page { font-family: "Arial MT", Arial, sans-serif; color: #000; font-size: 9px; }
+                                .tptr-body-sheet { min-height: 272mm; position: relative; padding: 20mm 12mm 14mm; box-sizing: border-box; }
+                                .tptr-body-header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 3mm; border-bottom: 1px solid #666; font-size: 10px; }
+                                .tptr-body-header-left { font-weight: 700; line-height: 1.2; color: #666; }
+                                .tptr-body-header-right { font-size: 10px; color: #666; }
+                                .tptr-body-content { padding-top: 10mm; }
+                                .tptr-body-section-title { text-align: center; font-size: 13px; font-weight: 700; margin-bottom: 5mm; }
+                                .tptr-body-list { width: 100%; border-collapse: collapse; margin-bottom: 7mm; }
+                                .tptr-body-list td { vertical-align: top; padding: 0 0 2mm; font-size: 10px; }
+                                .tptr-body-bullet { width: 6mm; text-align: center; }
+                                .tptr-body-main { font-size: 10px; line-height: 1.2; }
+                                .tptr-body-sub { font-size: 9px; font-style: italic; margin-top: 1mm; line-height: 1.2; }
+                                .tptr-body-bar { height: 7mm; background: #dfdfdf; margin: 5mm 0; }
+                                .tptr-body-role-table { width: 100%; border-collapse: collapse; }
+                                .tptr-body-role-table td { vertical-align: top; padding: 0 0 5mm; }
+                                .tptr-body-role-label { width: 44%; font-size: 10px; }
+                                .tptr-body-role-label-wrap { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 4px; row-gap: 1px; }
+                                .tptr-body-role-label-main { font-size: 10px; }
+                                .tptr-body-role-label-sub { font-size: 9px; font-style: italic; white-space: nowrap; }
+                                .tptr-body-role-sep { width: 4%; text-align: center; font-size: 10px; }
+                                .tptr-body-role-value { width: 52%; font-size: 10px; line-height: 1.2; }
+                                .tptr-body-footer { position: absolute; left: 12mm; right: 12mm; bottom: 8mm; }
+                                .tptr-body-footer-line { border-top: 1px solid #666; margin-bottom: 2mm; }
+                                .tptr-body-footer-row { display: flex; justify-content: space-between; font-size: 8px; color: #666; }
+                                .tptr-body-toc-content { padding: 10mm 24mm 0; }
+                                .tptr-body-toc-title { text-align: center; font-size: 11px; font-weight: 700; margin-bottom: 7mm; }
+                                .tptr-body-toc-title em { font-style: italic; font-weight: 400; }
+                                .tptr-body-toc-row { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content; align-items: end; column-gap: 2px; font-size: 11px; margin-bottom: 4mm; }
+                                .tptr-body-toc-row.section { margin-top: 1mm; margin-bottom: 5mm; }
+                                .tptr-body-toc-left { display: flex; align-items: baseline; gap: 4px; font-weight: 700; min-width: 0; }
+                                .tptr-body-toc-prefix { width: 16px; flex: 0 0 16px; }
+                                .tptr-body-toc-main { font-weight: 700; }
+                                .tptr-body-toc-sub { font-style: italic; font-weight: 400; }
+                                .tptr-body-toc-dots { min-width: 12px; border-bottom: 1px dotted #333; transform: translateY(-2px); }
+                                .tptr-body-toc-page-no { min-width: 10px; text-align: right; font-size: 11px; justify-self: end; }
+                                .tptr-body-intro-content { padding: 9mm 12mm 0; font-size: 10px; line-height: 1.25; }
+                                .tptr-body-intro-title { display: flex; align-items: baseline; gap: 4px; font-size: 11px; font-weight: 700; padding-bottom: 2mm; border-bottom: 1px solid #666; }
+                                .tptr-body-intro-title em { font-size: 10px; font-style: italic; font-weight: 400; }
+                                .tptr-body-intro-paragraph { margin: 4mm 0 0 4mm; text-align: justify; }
+                                .tptr-body-intro-paragraph em { display: block; margin-top: 1mm; font-size: 9px; font-style: italic; }
+                                .tptr-body-intro-headline { margin: 4mm 0 0 4mm; font-size: 11px; font-weight: 700; }
+                                .tptr-body-intro-headline em { display: block; margin-top: 1mm; font-size: 10px; font-style: italic; font-weight: 400; }
+                                .tptr-body-intro-info { width: 100%; border-collapse: collapse; margin-top: 4mm; }
+                                .tptr-body-intro-info td { vertical-align: top; padding: 0 0 3mm; }
+                                .tptr-body-intro-label { width: 46%; }
+                                .tptr-body-intro-label strong { display: block; font-size: 10px; font-weight: 700; }
+                                .tptr-body-intro-label em { display: block; font-size: 9px; font-style: italic; font-weight: 400; }
+                                .tptr-body-intro-sep { width: 3%; text-align: center; }
+                                .tptr-body-intro-value { width: 51%; font-size: 10px; font-weight: 400; }
+                                .tptr-body-acceptance-table { width: 100%; border-collapse: collapse; margin-top: 2mm; }
+                                .tptr-body-acceptance-table th, .tptr-body-acceptance-table td { border: 1px solid #000; padding: 2mm; font-size: 9px; vertical-align: middle; text-align: center; }
+                                .tptr-body-acceptance-table th { text-align: center; font-weight: 700; }
+                                .tptr-body-sign-cell img { max-width: 34mm; max-height: 10mm; display: block; margin: 0 auto; }
+                                .tptr-body-subsection { margin-top: 5mm; }
+                            </style>
+
+                            <div class="tptr-body-sheet">
+                                <div class="tptr-body-header">
+                                    <div class="tptr-body-header-left">
+                                        <div>DIVISION OF QA</div>
+                                        <div>TEST PROCEDURE</div>
+                                    </div>
+                                    <div class="tptr-body-header-right">
+                                        <t t-esc="body['project_name']"/>
+                                    </div>
+                                </div>
+
+                                <div class="tptr-body-content">
+                                    <div class="tptr-body-section-title">DISTRIBUSI <span style="font-style: italic; font-weight: 400;">(Distributed To)</span></div>
+
+                                    <table class="tptr-body-list">
+                                        <tbody>
+                                            <t t-foreach="body['distributed_to_rows']" t-as="item">
+                                                <tr>
+                                                    <td class="tptr-body-bullet">-</td>
+                                                    <td>
+                                                        <div class="tptr-body-main"><t t-esc="item['title']"/></div>
+                                                        <div class="tptr-body-sub"><t t-esc="item['subtitle']"/></div>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="tptr-body-bar"></div>
+
+                                    <table class="tptr-body-role-table">
+                                        <tbody>
+                                            <t t-foreach="body['role_rows']" t-as="row">
+                                                <tr>
+                                                    <td class="tptr-body-role-label">
+                                                        <div class="tptr-body-role-label-wrap">
+                                                            <span class="tptr-body-role-label-main"><t t-esc="row['label']"/></span>
+                                                            <span class="tptr-body-role-label-sub">(<t t-esc="row['role']"/>)</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="tptr-body-role-sep">:</td>
+                                                    <td class="tptr-body-role-value">
+                                                        <div><t t-esc="row['value']"/></div>
+                                                        <div class="tptr-body-sub"><t t-esc="row['subtitle']"/></div>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="tptr-body-bar"></div>
+                                </div>
+
+                                <div class="tptr-body-footer">
+                                    <div class="tptr-body-footer-line"></div>
+                                    <div class="tptr-body-footer-row">
+                                        <div><t t-esc="body['summary_footer_label']"/></div>
+                                        <div><t t-esc="body['body_page_number_label']"/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="page tptr-body-page">
+                            <div class="tptr-body-sheet">
+                                <div class="tptr-body-header">
+                                    <div class="tptr-body-header-left">
+                                        <div>DIVISION OF QA</div>
+                                        <div>TEST PROCEDURE</div>
+                                    </div>
+                                    <div class="tptr-body-header-right">
+                                        <t t-esc="body['project_name']"/>
+                                    </div>
+                                </div>
+
+                                <div class="tptr-body-toc-content">
+                                    <div class="tptr-body-toc-title">DAFTAR ISI <em>(Content)</em></div>
+
+                                    <div class="tptr-body-toc-row section">
+                                        <div class="tptr-body-toc-left">
+                                            <span class="tptr-body-toc-main">TEST PROCEDURE</span>
+                                        </div>
+                                        <span class="tptr-body-toc-dots"></span>
+                                        <span class="tptr-body-toc-page-no">2</span>
+                                    </div>
+
+                                    <t t-foreach="body['toc_test_procedure_rows']" t-as="row">
+                                        <div class="tptr-body-toc-row">
+                                            <div class="tptr-body-toc-left">
+                                                <span class="tptr-body-toc-prefix"><t t-esc="row['number']"/></span>
+                                                <span class="tptr-body-toc-main"><t t-esc="row['title']"/></span>
+                                                <span class="tptr-body-toc-sub">(<t t-esc="row['subtitle']"/>)</span>
+                                            </div>
+                                            <span class="tptr-body-toc-dots"></span>
+                                            <span class="tptr-body-toc-page-no"><t t-esc="row['page']"/></span>
+                                        </div>
+                                    </t>
+
+                                    <div class="tptr-body-toc-row section" style="margin-top: 7mm;">
+                                        <div class="tptr-body-toc-left">
+                                            <span class="tptr-body-toc-main">TEST RECORD</span>
+                                        </div>
+                                        <span class="tptr-body-toc-dots"></span>
+                                        <span class="tptr-body-toc-page-no">7</span>
+                                    </div>
+
+                                    <t t-foreach="body['toc_test_record_rows']" t-as="row">
+                                        <div class="tptr-body-toc-row">
+                                            <div class="tptr-body-toc-left">
+                                                <span class="tptr-body-toc-prefix"><t t-esc="row['number']"/></span>
+                                                <span class="tptr-body-toc-main"><t t-esc="row['title']"/></span>
+                                                <span class="tptr-body-toc-sub">(<t t-esc="row['subtitle']"/>)</span>
+                                            </div>
+                                            <span class="tptr-body-toc-dots"></span>
+                                            <span class="tptr-body-toc-page-no"><t t-esc="row['page']"/></span>
+                                        </div>
+                                    </t>
+                                </div>
+
+                                <div class="tptr-body-footer">
+                                    <div class="tptr-body-footer-line"></div>
+                                    <div class="tptr-body-footer-row">
+                                        <div><t t-esc="body['summary_footer_label']"/></div>
+                                        <div><t t-esc="body['toc_page_number_label']"/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="page tptr-body-page">
+                            <div class="tptr-body-sheet">
+                                <div class="tptr-body-header">
+                                    <div class="tptr-body-header-left">
+                                        <div>DIVISION OF QA</div>
+                                        <div>TEST PROCEDURE</div>
+                                    </div>
+                                    <div class="tptr-body-header-right">
+                                        <t t-esc="body['project_name']"/>
+                                    </div>
+                                </div>
+
+                                <div class="tptr-body-intro-content">
+                                    <div class="tptr-body-intro-title">
+                                        <span>1. PENDAHULUAN</span>
+                                        <em>(Introduction)</em>
+                                    </div>
+
+                                    <div class="tptr-body-intro-paragraph">
+                                        PENGUJIAN DILAKSANAKAN DI AREA SESUAI DENGAN PILIHAN DARI GALANGAN KAPAL.
+                                        <em>(The test will be performed in a suitable area at the Yard's option.)</em>
+                                    </div>
+
+                                    <div class="tptr-body-intro-paragraph">
+                                        KEGIATAN PENGUJIAN DI DERMAGA DILAKSANAKAN SESUAI DENGAN STANDAR PROSEDUR PENGUJIAN GALANGAN KAPAL DAN REKOMENDASI VENDOR SERTA PERSYARATAN KLASIFIKASI.
+                                        <em>(The harbor test activity will be carried out in accordance with the Yard's standard trial procedure and supplier recommendation and as required by Class.)</em>
+                                    </div>
+
+                                    <div class="tptr-body-intro-headline">
+                                        <t t-esc="body['intro_heading_main']"/>
+                                        <em>(<t t-esc="body['intro_heading_sub']"/>)</em>
+                                    </div>
+
+                                    <table class="tptr-body-intro-info">
+                                        <tbody>
+                                            <tr>
+                                                <td class="tptr-body-intro-label">
+                                                    <strong>NOMOR PROYEK</strong>
+                                                    <em>(Project Number)</em>
+                                                </td>
+                                                <td class="tptr-body-intro-sep">:</td>
+                                                <td class="tptr-body-intro-value"><t t-esc="body['intro_project_number_label']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tptr-body-intro-label">
+                                                    <strong>PENGUJIAN UNTUK NOMOR PROYEK</strong>
+                                                    <em>(Test related to Project Number)</em>
+                                                </td>
+                                                <td class="tptr-body-intro-sep">:</td>
+                                                <td class="tptr-body-intro-value"><t t-esc="body['intro_test_related_project_no']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tptr-body-intro-label">
+                                                    <strong>NOMOR DOKUMEN</strong>
+                                                    <em>(Document Number)</em>
+                                                </td>
+                                                <td class="tptr-body-intro-sep">:</td>
+                                                <td class="tptr-body-intro-value"><t t-esc="body['intro_document_number']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tptr-body-intro-label">
+                                                    <strong><t t-esc="body['intro_test_type_label']"/></strong>
+                                                </td>
+                                                <td class="tptr-body-intro-sep">:</td>
+                                                <td class="tptr-body-intro-value"><t t-esc="body['intro_test_object_label']"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tptr-body-intro-label">
+                                                    <strong>SPESIFIKASI KONTRAK</strong>
+                                                    <em>(Contract specification)</em>
+                                                </td>
+                                                <td class="tptr-body-intro-sep">:</td>
+                                                <td class="tptr-body-intro-value"><t t-esc="body['intro_contract_specification']"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <table class="tptr-body-acceptance-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Acceptance</th>
+                                                <th>Name</th>
+                                                <th>Signature</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="body['intro_acceptance_rows']" t-as="row">
+                                                <tr>
+                                                    <td><t t-esc="row['acceptance']"/></td>
+                                                    <td><t t-esc="row['name']"/></td>
+                                                    <td class="tptr-body-sign-cell">
+                                                        <img t-if="row['signature_image']" t-att-src="'data:image/png;base64,%s' % row['signature_image']" alt="signature"/>
+                                                    </td>
+                                                    <td><t t-esc="row['date']"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="tptr-body-subsection">
+                                        <div class="tptr-body-intro-title" style="border-bottom: none; padding-bottom: 0;">
+                                            <span>2. UMUM</span>
+                                            <em>(General)</em>
+                                        </div>
+                                        <div class="tptr-body-intro-paragraph">
+                                            <t t-if="doc.template_tptr == 'davits_rhib'">
+                                                PENGUJIAN DILAKSANAKAN UNTUK MEMASTIKAN BAHWA PERALATAN DAVITS DAN RIGID HULL INFLATABLE BOAT (RHIB) BEROPERASI SECARA AMAN DAN BERFUNGSI DENGAN BAIK SELAMA PENGOPERASIANNYA.
+                                                <em>(The test shall be carried out in order to confirm that Davits and Rigid Hull Inflatable Boat (RHIB) operates safely and well function during its operation.)</em>
+                                            </t>
+                                            <t t-else="">
+                                                PENGUJIAN DILAKSANAKAN UNTUK MEMASTIKAN BAHWA RIGID HULL INFLATABLE BOAT (RHIB) BEROPERASI SECARA AMAN DAN BERFUNGSI DENGAN BAIK SELAMA PENGOPERASIANNYA.
+                                                <em>(The test shall be carried out in order to confirm that Rigid Hull Inflatable Boat (RHIB) operates safely and well function during its operation.)</em>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tptr-body-footer">
+                                    <div class="tptr-body-footer-line"></div>
+                                    <div class="tptr-body-footer-row">
+                                        <div><t t-esc="body['summary_footer_label']"/></div>
+                                        <div><t t-esc="body['intro_page_number_label']"/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="page tptr-body-page">
+                            <div class="tptr-body-sheet">
+                                <div class="tptr-body-header">
+                                    <div class="tptr-body-header-left">
+                                        <div>DIVISION OF QA</div>
+                                        <div>TEST PROCEDURE</div>
+                                    </div>
+                                    <div class="tptr-body-header-right">
+                                        <t t-esc="body['project_name']"/>
+                                    </div>
+                                </div>
+
+                                <div class="tptr-body-content" style="padding-top: 9mm;">
+                                    <div class="tptr-body-subsection" style="margin-top: 0;">
+                                        <div class="tptr-body-intro-title" style="border-bottom: none; padding-bottom: 0;">
+                                            <span>3. DOKUMEN PENDUKUNG</span>
+                                            <em>(Documents for the test)</em>
+                                        </div>
+                                        <table class="tptr-body-list" style="margin-top: 3mm; margin-bottom: 4mm;">
+                                            <tbody>
+                                                <t t-foreach="body['procedure_document_rows']" t-as="row">
+                                                    <tr>
+                                                        <td class="tptr-body-bullet"><t t-esc="row['prefix']"/></td>
+                                                        <td t-att-style="'padding-left:%smm;' % (row['indent'] * 4)">
+                                                            <div class="tptr-body-main"><t t-esc="row['main']"/></div>
+                                                            <div t-if="row['sub']" class="tptr-body-sub"><t t-esc="row['sub']"/></div>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="tptr-body-subsection" style="margin-top: 2mm;">
+                                        <div class="tptr-body-intro-title" style="border-bottom: none; padding-bottom: 0;">
+                                            <span>4. REFERENSI PENDUKUNG</span>
+                                            <em>(References for the test)</em>
+                                        </div>
+                                        <table class="tptr-body-list" style="margin-top: 3mm; margin-bottom: 4mm;">
+                                            <tbody>
+                                                <t t-foreach="body['procedure_supporting_reference_rows']" t-as="row">
+                                                    <tr>
+                                                        <td class="tptr-body-bullet"><t t-esc="row['prefix']"/></td>
+                                                        <td>
+                                                            <div class="tptr-body-main"><t t-esc="row['main']"/></div>
+                                                            <div t-if="row['sub']" class="tptr-body-sub"><t t-esc="row['sub']"/></div>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="tptr-body-subsection" style="margin-top: 2mm;">
+                                        <div class="tptr-body-intro-title" style="border-bottom: none; padding-bottom: 0;">
+                                            <span>5. KONDISI</span>
+                                            <em>(Condition)</em>
+                                        </div>
+                                        <table class="tptr-body-list" style="margin-top: 3mm; margin-bottom: 4mm;">
+                                            <tbody>
+                                                <t t-foreach="body['procedure_condition_rows']" t-as="row">
+                                                    <tr>
+                                                        <td class="tptr-body-bullet"><t t-esc="row['prefix']"/></td>
+                                                        <td>
+                                                            <div class="tptr-body-main"><t t-esc="row['main']"/></div>
+                                                            <div t-if="row['sub']" class="tptr-body-sub"><t t-esc="row['sub']"/></div>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="tptr-body-subsection" style="margin-top: 2mm;">
+                                        <div class="tptr-body-intro-title" style="border-bottom: none; padding-bottom: 0;">
+                                            <span>6. WAKTU</span>
+                                            <em>(Time)</em>
+                                        </div>
+                                        <table class="tptr-body-list" style="margin-top: 3mm; margin-bottom: 4mm;">
+                                            <tbody>
+                                                <t t-foreach="body['procedure_time_rows']" t-as="row">
+                                                    <tr>
+                                                        <td class="tptr-body-bullet"><t t-esc="row['prefix']"/></td>
+                                                        <td>
+                                                            <div class="tptr-body-main"><t t-esc="row['main']"/></div>
+                                                            <div t-if="row['sub']" class="tptr-body-sub"><t t-esc="row['sub']"/></div>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="tptr-body-subsection" style="margin-top: 2mm;">
+                                        <div class="tptr-body-intro-title" style="border-bottom: none; padding-bottom: 0;">
+                                            <span>7. DEFINISI PENGUJIAN</span>
+                                            <em>(Definition of the Test)</em>
+                                        </div>
+                                        <table class="tptr-body-list" style="margin-top: 3mm; margin-bottom: 4mm;">
+                                            <tbody>
+                                                <t t-foreach="body['procedure_definition_rows']" t-as="row">
+                                                    <tr>
+                                                        <td class="tptr-body-bullet"><t t-esc="row['prefix']"/></td>
+                                                        <td t-att-style="'padding-left:%smm;' % (row['indent'] * 4)">
+                                                            <div class="tptr-body-main"><t t-esc="row['main']"/></div>
+                                                            <div t-if="row['sub']" class="tptr-body-sub"><t t-esc="row['sub']"/></div>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="tptr-body-footer">
+                                    <div class="tptr-body-footer-line"></div>
+                                    <div class="tptr-body-footer-row">
+                                        <div><t t-esc="body['summary_footer_label']"/></div>
+                                        <div><t t-esc="body['procedure_page_number_label']"/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

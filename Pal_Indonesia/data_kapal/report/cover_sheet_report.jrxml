@@ -60,6 +60,7 @@
     <parameter name="project_full_label" class="java.lang.String"/>
     <parameter name="document_footer_label" class="java.lang.String"/>
     <parameter name="summary_footer_label" class="java.lang.String"/>
+    <parameter name="summary_page_number_label" class="java.lang.String"/>
     <parameter name="approval_class_label" class="java.lang.String"/>
     <parameter name="approval_owner_label" class="java.lang.String"/>
 
@@ -861,8 +862,13 @@ TEST PROCEDURE]]></text>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font fontName="Arial" size="7"/>
                 </textElement>
-                <textFieldExpression><![CDATA["2 / " + String.valueOf($V{PAGE_NUMBER})]]></textFieldExpression>
+                <textFieldExpression><![CDATA[
+                    ($P{summary_page_number_label} != null && $P{summary_page_number_label}.trim().length() > 0)
+                    ? $P{summary_page_number_label}
+                    : "2 / 12"
+                ]]></textFieldExpression>
             </textField>
+
         </band>
     </summary>
 </jasperReport>
